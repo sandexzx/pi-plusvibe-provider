@@ -1,0 +1,32 @@
+{
+  "name": "pi-plusvibe-provider",
+  "version": "0.1.0",
+  "description": "Pi custom provider for the PlusVibeAPI router (plusvibeapi.ru), an OpenAI-compatible multi-model gateway",
+  "type": "module",
+  "keywords": ["pi-package", "pi-extension", "plusvibe", "plusvibeapi", "provider"],
+  "license": "MIT",
+  "files": ["index.ts", "src/", "scripts/", "README.md", "LICENSE"],
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "test": "npm run typecheck && tsx tests/test-catalog.ts && tsx tests/test-rate.ts && tsx tests/test-api-key.ts && tsx tests/test-models.ts && tsx tests/test-balance.ts && tsx tests/test-oauth.ts",
+    "sync:catalog": "tsx scripts/sync-catalog.ts"
+  },
+  "pi": {
+    "extensions": ["./index.ts"]
+  },
+  "devDependencies": {
+    "@earendil-works/pi-ai": "^1.1.0",
+    "@earendil-works/pi-coding-agent": "^1.1.0",
+    "@types/node": "25.6.0",
+    "tsx": "4.22.4",
+    "typescript": "6.0.3"
+  },
+  "peerDependencies": {
+    "@earendil-works/pi-ai": "*",
+    "@earendil-works/pi-coding-agent": "*"
+  },
+  "peerDependenciesMeta": {
+    "@earendil-works/pi-ai": { "optional": true },
+    "@earendil-works/pi-coding-agent": { "optional": true }
+  }
+}
