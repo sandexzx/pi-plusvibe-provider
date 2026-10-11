@@ -125,9 +125,10 @@ export interface BalanceResult {
 /**
  * Read the account balance (`GET /v1/balance`).
  *
- * The endpoint shape is not documented, so the raw payload is returned and
- * formatted generically by formatBalance(). Never throws: a failed balance
- * lookup must not break the surrounding command.
+ * The endpoint itself is documented (https://plusvibeapi.ru/docs/balance-usage),
+ * but its response shape is not, so the raw payload is returned and formatted
+ * generically by formatBalance(). Never throws: a failed balance lookup must
+ * not break the surrounding command.
  */
 export async function fetchBalance(request: BalanceRequest): Promise<BalanceResult> {
   const baseUrl = normalizeBaseUrl(request.baseUrl ?? DEFAULT_BASE_URL)
