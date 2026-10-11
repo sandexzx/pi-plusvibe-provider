@@ -72,6 +72,29 @@ export const DEEPSEEK_THINKING_LEVEL_MAP: ThinkingLevelMap = {
 
 export const DEEPSEEK_COMPAT: ThinkingFormatCompat = { thinkingFormat: "openrouter" }
 
+/**
+ * Thinking setup for a single model.
+ *
+ * Non-DeepSeek models only get a map when the catalog advertises explicit
+ * levels. DeepSeek models ALWAYS go through the workaround table: the catalog
+ * levels decide which pi levels stay selectable (`null` hides the rest), while
+ * the effort value sent on the wire comes from DEEPSEEK_THINKING_LEVEL_MAP, so
+ * `low` cannot leak through as "thinking off" when the vendor list happens to
+ * publish explicit levels.
+ */
+export function thinkingLevelMapForModel(model: CatalogModel): ThinkingLevelMap | undefined {
+  if (!isDeepSeekModel(model)) return thinkingLevelMapFor(model.thinkingLevels)
+
+  const supported =
+    model.thinkingLevels && model.thinkingLevels.length > 0 ? new Set<string>(model.thinkingLevels) : undefined
+
+  const map: ThinkingLevelMap = { off: DEEPSEEK_THINKING_LEVEL_MAP.off ?? "none" }
+  for (const level of PI_THINKING_LEVELS) {
+    map[level] = supported && !supported.has(level) ? null : (DEEPSEEK_THINKING_LEVEL_MAP[level] ?? level)
+  }
+  return map
+}
+
 export interface ProviderModelOptions {
   /** RUB→USD divisor. 0 disables cost reporting (pi would show $0.00). */
   rubPerUsd: number
@@ -94,8 +117,7 @@ export function toProviderModels(
       maxTokens: model.maxTokens > 0 ? model.maxTokens : FALLBACK_MAX_TOKENS,
     }
 
-    const thinkingLevelMap =
-      thinkingLevelMapFor(model.thinkingLevels) ?? (isDeepSeekModel(model) ? DEEPSEEK_THINKING_LEVEL_MAP : undefined)
+    const thinkingLevelMap = thinkingLevelMapForModel(model)
     if (thinkingLevelMap) definition.thinkingLevelMap = thinkingLevelMap
     if (isDeepSeekModel(model)) definition.compat = DEEPSEEK_COMPAT
 

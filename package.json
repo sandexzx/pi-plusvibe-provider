@@ -5,6 +5,9 @@
   "type": "module",
   "keywords": ["pi-package", "pi-extension", "plusvibe", "plusvibeapi", "provider"],
   "license": "MIT",
+  "engines": {
+    "node": ">=20.3"
+  },
   "files": ["index.ts", "src/", "scripts/", "README.md", "LICENSE"],
   "scripts": {
     "typecheck": "tsc --noEmit",

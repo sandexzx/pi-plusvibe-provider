@@ -20,11 +20,14 @@ export const CATALOG_URL = "https://plusvibeapi.ru/api/catalog"
 /** Wire defaults. Both can be overridden with environment variables. */
 export const PROVIDER_ID = "plusvibe"
 export const DEFAULT_BASE_URL = "https://plusvibeapi.ru/v1"
+
+/**
+ * Mirror gateway. It is not selected automatically: point `PLUSVIBE_BASE_URL`
+ * at it when the primary host is unreachable.
+ */
 export const FALLBACK_BASE_URL = "https://gw.plusvibeapi.ru/v1"
 
-export const ENV_API_KEY = "PLUSVIBE_API_KEY"
 export const ENV_BASE_URL = "PLUSVIBE_BASE_URL"
-export const ENV_RUB_PER_USD = "PLUSVIBE_RUB_PER_USD"
 
 /** pi thinking levels, in ascending effort order. `off` is always accepted. */
 export const PI_THINKING_LEVELS = ["minimal", "low", "medium", "high", "xhigh", "max"] as const

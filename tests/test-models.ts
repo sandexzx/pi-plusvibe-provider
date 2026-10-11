@@ -148,7 +148,7 @@ test("toProviderModels detects DeepSeek by model id when maker is missing", () =
   assert.equal(model.thinkingLevelMap?.low, "medium")
 })
 
-test("toProviderModels lets explicit catalog levels override the DeepSeek fallback", () => {
+test("toProviderModels composes explicit DeepSeek levels with the thinking workaround", () => {
   const [model] = toProviderModels(
     [
       {
@@ -164,9 +164,13 @@ test("toProviderModels lets explicit catalog levels override the DeepSeek fallba
     ],
     { rubPerUsd: 0 },
   )
+  // The catalog restricts WHICH levels exist; the workaround decides what is
+  // sent for them. `low` must not travel as "low": the router reads that as
+  // "thinking off".
   assert.deepEqual(model.thinkingLevelMap, {
+    off: "none",
     minimal: null,
-    low: "low",
+    low: "medium",
     medium: null,
     high: "high",
     xhigh: null,

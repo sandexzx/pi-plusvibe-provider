@@ -142,4 +142,46 @@ test("stored credentials round-trip through getApiKey", async () => {
   assert.equal(getApiKey(await refreshToken(credentials)), "sk-pv-roundtrip")
 })
 
+test("validateApiKey gives up after its own timeout", async () => {
+  const hang = (async (_url: string, init: RequestInit = {}) => {
+    const signal = init.signal as AbortSignal | null
+    await new Promise((_resolve, reject) => {
+      // A plain timer keeps the event loop alive: Node unrefs the timer behind
+      // AbortSignal.timeout(), so an otherwise idle loop could exit first.
+      const keepAlive = setTimeout(() => reject(new Error("test fetch never finished")), 2_000)
+      signal?.addEventListener(
+        "abort",
+        () => {
+          clearTimeout(keepAlive)
+          reject(signal.reason)
+        },
+        { once: true },
+      )
+    })
+    return jsonResponse(200, {})
+  }) as unknown as typeof fetch
+
+  const result = await validateApiKey("sk-pv-abc", { fetchImpl: hang, baseUrl: "https://example.test/v1", timeoutMs: 5 })
+  assert.equal(result.ok, false)
+  assert.equal(result.status, 0)
+})
+
+test("validateApiKey redacts a credential echoed back by the gateway", async () => {
+  const echo = (async () =>
+    new Response("Invalid Authorization: Bearer sk-pv-secret-test", { status: 401 })) as unknown as typeof fetch
+
+  const result = await validateApiKey("sk-pv-secret-test", { fetchImpl: echo, baseUrl: "https://example.test/v1" })
+  assert.equal(result.ok, false)
+  assert.ok(!(result.message ?? "").includes("sk-pv-secret-test"), result.message)
+})
+
+test("login stops when the caller has already aborted", async () => {
+  const callbacks = fakeCallbacks(["sk-pv-good"])
+  const controller = new AbortController()
+  controller.abort()
+
+  await assert.rejects(() => login(callbacks, { fetchImpl: VALID_FETCH, signal: controller.signal }), /отмен/)
+  assert.equal(callbacks.prompts, 0)
+})
+
 await run()

@@ -12,8 +12,8 @@
  * object assignable to `ProviderConfig["oauth"]`.
  */
 
-import { looksLikeApiKey, normalizeApiKey } from "./api-key.ts"
-import { baseUrlFromEnv, normalizeBaseUrl } from "./api.ts"
+import { looksLikeApiKey, normalizeApiKey, sanitizeRemoteText } from "./api-key.ts"
+import { baseUrlFromEnv, combineSignals, normalizeBaseUrl } from "./api.ts"
 
 /** Where users create and copy keys. */
 export const DASHBOARD_URL = "https://plusvibeapi.ru/"
@@ -67,6 +67,14 @@ export interface OAuthCredentials {
 export const MAX_ATTEMPTS = 3
 
 /**
+ * Upper bound for the key-check request.
+ *
+ * The callbacks' signal may be missing (a programmatic caller), so without a
+ * timeout a hung /v1/models request would leave `/login` waiting forever.
+ */
+export const VALIDATE_TIMEOUT_MS = 15_000
+
+/**
  * Wrap an API key as OAuth-shaped credentials.
  *
  * `expires: Number.MAX_SAFE_INTEGER` marks the credential as never expiring;
@@ -91,6 +99,7 @@ export interface ValidateOptions {
   baseUrl?: string
   signal?: AbortSignal
   fetchImpl?: typeof fetch
+  timeoutMs?: number
 }
 
 export interface ValidateResult {
@@ -104,7 +113,8 @@ export interface ValidateResult {
  *
  * Returns a result instead of throwing so the login loop can re-prompt. The
  * vendor's 401 body is `{"error":{"message":"…","type":"authentication_error",…}}`,
- * whose `message` is surfaced verbatim.
+ * whose `message` is surfaced verbatim — redacted, however, because a gateway
+ * may echo the Authorization header back.
  */
 export async function validateApiKey(key: string, options: ValidateOptions = {}): Promise<ValidateResult> {
   const baseUrl = normalizeBaseUrl(options.baseUrl ?? baseUrlFromEnv())
@@ -113,7 +123,7 @@ export async function validateApiKey(key: string, options: ValidateOptions = {})
     const response = await fetchImpl(`${baseUrl}/models`, {
       method: "GET",
       headers: { accept: "application/json", authorization: `Bearer ${key}` },
-      signal: options.signal ?? null,
+      signal: combineSignals(options.signal, options.timeoutMs ?? VALIDATE_TIMEOUT_MS) ?? null,
     })
 
     if (response.ok) return { ok: true, status: response.status }
@@ -121,7 +131,7 @@ export async function validateApiKey(key: string, options: ValidateOptions = {})
     const body = await response.text()
     return { ok: false, status: response.status, message: errorMessageFromBody(body, response.status) }
   } catch (error) {
-    const detail = error instanceof Error ? error.message : String(error)
+    const detail = sanitizeRemoteText(error instanceof Error ? error.message : String(error))
     return { ok: false, status: 0, message: `Не удалось связаться с PlusVibeAPI: ${detail}` }
   }
 }
@@ -130,14 +140,15 @@ export async function validateApiKey(key: string, options: ValidateOptions = {})
  * Turn an error response body into a human-readable message.
  *
  * Handles the vendor shapes `{"error":{"message":"…"}}` and a bare
- * `{"message":"…"}`, falling back to the HTTP status.
+ * `{"message":"…"}`, falling back to the HTTP status. The upstream string is
+ * treated as untrusted: credentials are masked and the length is capped.
  */
 export function errorMessageFromBody(body: string, status: number): string {
   let upstream: string | undefined
   try {
     const parsed = JSON.parse(body) as { error?: { message?: unknown }; message?: unknown; detail?: unknown }
     const candidate = parsed.error?.message ?? parsed.message ?? parsed.detail
-    if (typeof candidate === "string" && candidate.trim().length > 0) upstream = candidate.trim()
+    if (typeof candidate === "string" && candidate.trim().length > 0) upstream = sanitizeRemoteText(candidate)
   } catch {
     // Body is not JSON; keep the status-only message.
   }
@@ -158,11 +169,16 @@ export async function login(callbacks: OAuthLoginCallbacks, options: ValidateOpt
   let lastError = "неизвестная ошибка"
 
   for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt += 1) {
+    // Cancellation must stop the loop: pi may abort while a prompt is open.
+    if (validateOptions.signal?.aborted) throw new Error("PlusVibeAPI: вход отменён")
+
     const raw = await callbacks.onPrompt({
       message: "Вставьте API-ключ PlusVibeAPI (sk-pv-…)",
       placeholder: "sk-pv-…",
       allowEmpty: false,
     })
+
+    if (validateOptions.signal?.aborted) throw new Error("PlusVibeAPI: вход отменён")
 
     const key = normalizeApiKey(raw)
     if (!key) {

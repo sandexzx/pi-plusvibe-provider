@@ -15,9 +15,11 @@ import {
   CBR_XML_URL,
   ER_API_URL,
   RATE_CACHE_TTL_MS,
+  RATE_MAX_CACHE_AGE_MS,
   describeRate,
   fetchRemoteRate,
   isRateCacheFresh,
+  isRateCacheUsable,
   parseCbrJson,
   parseCbrXml,
   parseErApi,
@@ -154,22 +156,34 @@ test("isRateCacheFresh compares against the TTL", () => {
   assert.equal(isRateCacheFresh(quote, 1_000_000, 0), false)
 })
 
-test("syncRubPerUsd prefers the manual value, then the cache, then 0", () => {
+test("isRateCacheUsable rejects a quote that is older than the maximum age", () => {
+  const quote: RateQuote = { rubPerUsd: 80, source: "test", fetchedAt: 1_000_000 }
+  assert.equal(isRateCacheUsable(quote, 1_000_000), true)
+  assert.equal(isRateCacheUsable(quote, 1_000_000 + RATE_MAX_CACHE_AGE_MS), true)
+  assert.equal(isRateCacheUsable(quote, 1_000_000 + RATE_MAX_CACHE_AGE_MS + 1), false)
+  assert.equal(isRateCacheUsable(quote, 1_000_001, 0), false)
+})
+
+test("syncRubPerUsd prefers the manual value, then a usable cache, then 0", () => {
   const dir = tempDir()
   try {
     const path = join(dir, "usd-rate.json")
     assert.equal(syncRubPerUsd({}, { cachePath: path }), 0)
 
-    writeRateCache(path, { rubPerUsd: 77.7, source: "test", fetchedAt: 0 })
+    writeRateCache(path, { rubPerUsd: 77.7, source: "test", fetchedAt: Date.now() - 60_000 })
     assert.equal(syncRubPerUsd({}, { cachePath: path }), 77.7)
     assert.equal(syncRubPerUsd({ PLUSVIBE_RUB_PER_USD: "90" }, { cachePath: path }), 90)
     assert.equal(syncRubPerUsd({ PLUSVIBE_RUB_PER_USD: "0" }, { cachePath: path }), 0)
+
+    // Too old to trust: reporting no cost beats reporting a wrong cost.
+    writeRateCache(path, { rubPerUsd: 77.7, source: "test", fetchedAt: Date.now() - RATE_MAX_CACHE_AGE_MS - 1_000 })
+    assert.equal(syncRubPerUsd({}, { cachePath: path }), 0)
   } finally {
     rmSync(dir, { recursive: true, force: true })
   }
 })
 
-test("refreshRate returns undefined when the rate is disabled or manual", async () => {
+test("refreshRate returns undefined when the rate is disabled and a manual quote otherwise", async () => {
   const { impl, calls } = stubFetch({})
   assert.equal(await refreshRate({ env: { PLUSVIBE_RUB_PER_USD: "0" }, fetchImpl: impl }), undefined)
 
@@ -177,6 +191,22 @@ test("refreshRate returns undefined when the rate is disabled or manual", async 
   assert.equal(manual?.rubPerUsd, 87.25)
   assert.equal(manual?.source, "PLUSVIBE_RUB_PER_USD")
   assert.deepEqual(calls, [])
+})
+
+test("refreshRate ignores a cache entry that is too old to trust", async () => {
+  const dir = tempDir()
+  try {
+    const cachePath = join(dir, "usd-rate.json")
+    const now = 5_000_000_000_000
+    writeRateCache(cachePath, { rubPerUsd: 79, source: "старое", fetchedAt: 0 })
+
+    const { impl, calls } = stubFetch({ [CBR_JSON_URL]: async () => jsonResponse(CBR_JSON_FIXTURE) })
+    const quote = await refreshRate({ env: {}, cachePath, now, fetchImpl: impl })
+    assert.equal(quote?.rubPerUsd, 80.1234)
+    assert.deepEqual(calls, [CBR_JSON_URL])
+  } finally {
+    rmSync(dir, { recursive: true, force: true })
+  }
 })
 
 test("refreshRate serves a fresh cache without touching the network", async () => {

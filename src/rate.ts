@@ -6,8 +6,9 @@
  *
  *   1. `PLUSVIBE_RUB_PER_USD` — an explicit value wins; `0`/`off` disables
  *      cost reporting entirely.
- *   2. A cached quote from an earlier run, however old — a stale rate is still
- *      closer to the truth than `$0.00`.
+ *   2. A cached quote from an earlier run, as long as it is younger than
+ *      RATE_MAX_CACHE_AGE_MS — a slightly stale rate beats `$0.00`, a
+ *      years-old one does not.
  *   3. `0`, meaning "unknown"; costs stay hidden until the first fetch works.
  *
  * Quotes come from free, key-less sources, tried in order: the CBR daily JSON
@@ -16,7 +17,7 @@
  * `~/.cache/pi-plusvibe-provider`.
  */
 
-import { mkdirSync, readFileSync, writeFileSync } from "node:fs"
+import { mkdirSync, readFileSync, renameSync, writeFileSync } from "node:fs"
 import { homedir } from "node:os"
 import { dirname, join } from "node:path"
 
@@ -37,6 +38,9 @@ export const MANUAL_SOURCE = "PLUSVIBE_RUB_PER_USD"
 /** The CBR publishes one rate per business day; half a day of cache is plenty. */
 export const RATE_CACHE_TTL_MS = 12 * 60 * 60 * 1000
 export const RATE_CACHE_FILE = "usd-rate.json"
+
+/** How long a cached quote stays usable for cost reporting. */
+export const RATE_MAX_CACHE_AGE_MS = 7 * 24 * 60 * 60 * 1000
 
 /** Per-source timeout. */
 export const RATE_TIMEOUT_MS = 8_000
@@ -220,7 +224,11 @@ export function readRateCache(path: string): RateQuote | undefined {
 export function writeRateCache(path: string, quote: RateQuote): void {
   try {
     mkdirSync(dirname(path), { recursive: true })
-    writeFileSync(path, `${JSON.stringify(quote, null, 2)}\n`, "utf8")
+    // Write-then-rename: two pi processes refreshing at once must not truncate
+    // each other's file.
+    const temporary = `${path}.${process.pid}.tmp`
+    writeFileSync(temporary, `${JSON.stringify(quote, null, 2)}\n`, "utf8")
+    renameSync(temporary, path)
   } catch {
     // Ignore: the rate still applies for this session.
   }
@@ -228,6 +236,20 @@ export function writeRateCache(path: string, quote: RateQuote): void {
 
 export function isRateCacheFresh(quote: RateQuote, now: number = Date.now(), ttl: number = RATE_CACHE_TTL_MS): boolean {
   return now - quote.fetchedAt < ttl
+}
+
+/**
+ * True while a cached quote is still close enough to today's rate.
+ *
+ * A quote older than RATE_MAX_CACHE_AGE_MS is treated as unknown: reporting
+ * costs with a years-old rate is worse than reporting none.
+ */
+export function isRateCacheUsable(
+  quote: RateQuote,
+  now: number = Date.now(),
+  maxAge: number = RATE_MAX_CACHE_AGE_MS,
+): boolean {
+  return now - quote.fetchedAt <= maxAge
 }
 
 /**
@@ -243,7 +265,8 @@ export function syncRubPerUsd(
   if (mode.kind === "disabled") return 0
 
   const cached = readRateCache(options.cachePath ?? rateCachePath(env))
-  return cached?.rubPerUsd ?? 0
+  if (!cached || !isRateCacheUsable(cached)) return 0
+  return cached.rubPerUsd
 }
 
 export interface RefreshRateOptions extends FetchRateOptions {
@@ -257,9 +280,10 @@ export interface RefreshRateOptions extends FetchRateOptions {
  * Resolve the rate for the current session.
  *
  * Uses the cached quote while it is fresh, otherwise asks the network and
- * refreshes the cache. Returns undefined when the rate is disabled, when a
- * manual value is configured (that one is already in effect), or when every
- * source failed.
+ * refreshes the cache. Returns undefined when the rate is disabled or when
+ * every source failed. A manual `PLUSVIBE_RUB_PER_USD` value is reported as a
+ * quote tagged MANUAL_SOURCE, but it is already in effect at registration
+ * time, so the return value is only used for display.
  */
 export async function refreshRate(options: RefreshRateOptions = {}): Promise<RateQuote | undefined> {
   const env = options.env ?? process.env
@@ -273,7 +297,9 @@ export async function refreshRate(options: RefreshRateOptions = {}): Promise<Rat
   }
 
   const cached = readRateCache(cachePath)
-  if (cached && isRateCacheFresh(cached, now, options.ttl ?? RATE_CACHE_TTL_MS)) return cached
+  if (cached && isRateCacheFresh(cached, now, options.ttl ?? RATE_CACHE_TTL_MS) && isRateCacheUsable(cached, now)) {
+    return cached
+  }
 
   const remote = await fetchRemoteRate(options)
   if (remote) writeRateCache(cachePath, remote)

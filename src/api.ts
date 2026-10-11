@@ -5,14 +5,8 @@
  * a network. All helpers accept an injected `fetch` for tests.
  */
 
-import {
-  CATALOG_URL,
-  DEFAULT_BASE_URL,
-  ENV_BASE_URL,
-  FALLBACK_BASE_URL,
-  PI_MODELS_URL,
-  type CatalogModel,
-} from "./catalog.ts"
+import { sanitizeRemoteText } from "./api-key.ts"
+import { CATALOG_URL, DEFAULT_BASE_URL, ENV_BASE_URL, PI_MODELS_URL, type CatalogModel } from "./catalog.ts"
 
 export interface FetchJsonOptions {
   fetchImpl?: typeof fetch
@@ -28,7 +22,12 @@ export function normalizeBaseUrl(raw: string): string {
   return trimmed.replace(/\/+$/, "")
 }
 
-/** Resolve the API base url, honoring `PLUSVIBE_BASE_URL`. */
+/**
+ * Resolve the API base url, honoring `PLUSVIBE_BASE_URL`.
+ *
+ * Point that variable at `https://gw.plusvibeapi.ru/v1` to use the mirror
+ * gateway; it is not switched to automatically.
+ */
 export function baseUrlFromEnv(env: Record<string, string | undefined> = process.env): string {
   const configured = env[ENV_BASE_URL]
   if (typeof configured === "string" && configured.trim().length > 0) {
@@ -37,12 +36,13 @@ export function baseUrlFromEnv(env: Record<string, string | undefined> = process
   return DEFAULT_BASE_URL
 }
 
-/** The mirror gateway, used when the primary host is unreachable. */
-export function fallbackBaseUrl(): string {
-  return FALLBACK_BASE_URL
-}
-
-function combineSignals(signal: AbortSignal | undefined, timeoutMs: number | undefined): AbortSignal | undefined {
+/**
+ * Combine a caller signal with a timeout into one signal.
+ *
+ * Exported so the /login validation path (src/oauth.ts) can bound its own
+ * request without duplicating the AbortSignal.any() logic.
+ */
+export function combineSignals(signal: AbortSignal | undefined, timeoutMs: number | undefined): AbortSignal | undefined {
   if (!timeoutMs || timeoutMs <= 0) return signal
   const timeout = AbortSignal.timeout(timeoutMs)
   return signal ? AbortSignal.any([signal, timeout]) : timeout
@@ -64,7 +64,7 @@ export async function fetchJson(url: string, options: FetchJsonOptions = {}): Pr
 
   const body = await response.text()
   if (!response.ok) {
-    const detail = body.trim().slice(0, 500)
+    const detail = sanitizeRemoteText(body)
     throw new Error(`${url} -> HTTP ${response.status}${detail ? `: ${detail}` : ""}`)
   }
 
@@ -90,7 +90,7 @@ export async function fetchText(url: string, options: FetchJsonOptions = {}): Pr
 
   const body = await response.text()
   if (!response.ok) {
-    const detail = body.trim().slice(0, 500)
+    const detail = sanitizeRemoteText(body)
     throw new Error(`${url} -> HTTP ${response.status}${detail ? `: ${detail}` : ""}`)
   }
 
