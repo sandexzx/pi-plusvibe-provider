@@ -5,12 +5,12 @@
  *   https://plusvibeapi.ru/api/integrations/pi.models.json
  *   https://plusvibeapi.ru/api/catalog
  *
- * Generated: 2026-10-11T20:03:00.068Z
+ * Generated: 2026-10-12T08:34:39.974Z
  */
 
 import type { CatalogModel } from "./catalog.ts"
 
-export const SNAPSHOT_GENERATED_AT = "2026-10-11T20:03:00.068Z"
+export const SNAPSHOT_GENERATED_AT = "2026-10-12T08:34:39.974Z"
 
 export const SNAPSHOT_MODELS: CatalogModel[] = [
   {
@@ -303,12 +303,12 @@ export const SNAPSHOT_MODELS: CatalogModel[] = [
       "image"
     ],
     "contextWindow": 262144,
-    "maxTokens": 16000,
+    "maxTokens": 32000,
     "maker": "Другие",
     "costRub": {
-      "input": 12.83,
-      "output": 38.47,
-      "cacheRead": 1,
+      "input": 12.75,
+      "output": 48.16,
+      "cacheRead": 7,
       "cacheWrite": 13
     }
   },
@@ -607,6 +607,24 @@ export const SNAPSHOT_MODELS: CatalogModel[] = [
     ]
   },
   {
+    "id": "llama-4-maverick",
+    "name": "Llama 4 Maverick",
+    "reasoning": false,
+    "input": [
+      "text",
+      "image"
+    ],
+    "contextWindow": 1048576,
+    "maxTokens": 32000,
+    "maker": "Meta",
+    "costRub": {
+      "input": 28.33,
+      "output": 113.32,
+      "cacheRead": 0,
+      "cacheWrite": 0
+    }
+  },
+  {
     "id": "mimo-v2.6-flash",
     "name": "MiMo V2.6 Flash",
     "reasoning": true,
@@ -746,6 +764,40 @@ export const SNAPSHOT_MODELS: CatalogModel[] = [
       "output": 130,
       "cacheRead": 3,
       "cacheWrite": 26
+    }
+  },
+  {
+    "id": "nemotron-3-super-120b-a12b",
+    "name": "Nemotron 3 Super 120B A12B",
+    "reasoning": true,
+    "input": [
+      "text"
+    ],
+    "contextWindow": 262144,
+    "maxTokens": 32000,
+    "maker": "NVIDIA",
+    "costRub": {
+      "input": 12.04,
+      "output": 56.66,
+      "cacheRead": 0,
+      "cacheWrite": 0
+    }
+  },
+  {
+    "id": "nemotron-3.5-lightning",
+    "name": "Nemotron 3.5 Lightning",
+    "reasoning": true,
+    "input": [
+      "text"
+    ],
+    "contextWindow": 262144,
+    "maxTokens": 32000,
+    "maker": "NVIDIA",
+    "costRub": {
+      "input": 8.5,
+      "output": 22.66,
+      "cacheRead": 4,
+      "cacheWrite": 8
     }
   },
   {
