@@ -10,5 +10,5 @@
     "strict": true,
     "types": ["node"]
   },
-  "include": ["index.ts", "src/**/*.ts", "tests/**/*.ts"]
+  "include": ["index.ts", ".agents/skills/**/*.ts", "src/**/*.ts", "tests/**/*.ts"]
 }
