@@ -95,6 +95,12 @@ export function thinkingLevelMapForModel(model: CatalogModel): ThinkingLevelMap 
   return map
 }
 
+/**
+ * Marker appended to every model name, mirroring the `(CC)` suffix of the
+ * Command Code provider in the model selector.
+ */
+export const MODEL_NAME_SUFFIX = " (PV)"
+
 export interface ProviderModelOptions {
   /** RUB→USD divisor. 0 disables cost reporting (pi would show $0.00). */
   rubPerUsd: number
@@ -108,7 +114,7 @@ export function toProviderModels(
   return models.map((model) => {
     const definition: ProviderModelDefinition = {
       id: model.id,
-      name: model.name,
+      name: `${model.name}${MODEL_NAME_SUFFIX}`,
       api: PROVIDER_API,
       reasoning: model.reasoning,
       input: [...model.input],

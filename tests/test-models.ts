@@ -5,6 +5,7 @@ import { ZERO_COST } from "../src/catalog.ts"
 import {
   FALLBACK_CONTEXT_WINDOW,
   FALLBACK_MAX_TOKENS,
+  MODEL_NAME_SUFFIX,
   PROVIDER_API,
   modelOptionsFromEnv,
   serializeSnapshot,
@@ -56,6 +57,14 @@ test("toProviderModels always targets pi's openai-completions API", () => {
   for (const model of toProviderModels(SAMPLE, { rubPerUsd: 0 })) {
     assert.equal(model.api, PROVIDER_API)
   }
+})
+
+test("toProviderModels marks model names with the provider suffix", () => {
+  const models = toProviderModels([...SAMPLE, ...SNAPSHOT_MODELS], { rubPerUsd: 0 })
+  for (const model of models) {
+    assert.ok(model.name.endsWith(MODEL_NAME_SUFFIX), `${model.id}: ${model.name}`)
+  }
+  assert.equal(models[0].name, "With Cost (PV)")
 })
 
 test("toProviderModels attaches thinkingLevelMap only when levels are explicit", () => {
