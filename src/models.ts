@@ -4,6 +4,7 @@
 
 import {
   CATALOG_URL,
+  DEFAULT_BASE_URL,
   PI_MODELS_URL,
   PI_THINKING_LEVELS,
   isDeepSeekModel,
@@ -19,8 +20,19 @@ import { rateModeFromEnv } from "./rate.ts"
 export const FALLBACK_CONTEXT_WINDOW = 128_000
 export const FALLBACK_MAX_TOKENS = 16_384
 
-/** Wire used for every PlusVibeAPI chat model. */
+/** Default wire for non-Claude PlusVibeAPI chat models. */
 export const PROVIDER_API = "openai-completions"
+export const ANTHROPIC_API = "anthropic-messages"
+
+/** Recognize both vendor-prefixed catalog IDs and unprefixed live Claude IDs. */
+export function isAnthropicModel(model: CatalogModel): boolean {
+  return model.maker?.trim().toLowerCase() === "anthropic" || /^(?:anthropic\/|claude-)/i.test(model.id)
+}
+
+/** The Anthropic SDK appends `/v1/messages`, unlike the OpenAI SDK. */
+export function anthropicBaseUrl(baseUrl: string): string {
+  return baseUrl.trim().replace(/\/+$/, "").replace(/\/v1$/, "")
+}
 
 /** Structural subset of pi's OpenAICompletionsCompat. */
 export interface ThinkingFormatCompat {
@@ -31,7 +43,8 @@ export interface ThinkingFormatCompat {
 export interface ProviderModelDefinition {
   id: string
   name: string
-  api: typeof PROVIDER_API
+  api: typeof PROVIDER_API | typeof ANTHROPIC_API
+  baseUrl?: string
   reasoning: boolean
   input: ("text" | "image")[]
   cost: Cost
@@ -75,7 +88,8 @@ export const DEEPSEEK_COMPAT: ThinkingFormatCompat = { thinkingFormat: "openrout
 /**
  * Thinking setup for a single model.
  *
- * Non-DeepSeek models only get a map when the catalog advertises explicit
+ * Claude uses native token budgets, not catalog effort mappings. Other
+ * non-DeepSeek models only get a map when the catalog advertises explicit
  * levels. DeepSeek models ALWAYS go through the workaround table: the catalog
  * levels decide which pi levels stay selectable (`null` hides the rest), while
  * the effort value sent on the wire comes from DEEPSEEK_THINKING_LEVEL_MAP, so
@@ -83,6 +97,7 @@ export const DEEPSEEK_COMPAT: ThinkingFormatCompat = { thinkingFormat: "openrout
  * publish explicit levels.
  */
 export function thinkingLevelMapForModel(model: CatalogModel): ThinkingLevelMap | undefined {
+  if (isAnthropicModel(model)) return undefined
   if (!isDeepSeekModel(model)) return thinkingLevelMapFor(model.thinkingLevels)
 
   const supported =
@@ -104,6 +119,8 @@ export const MODEL_NAME_SUFFIX = " (PV)"
 export interface ProviderModelOptions {
   /** RUB→USD divisor. 0 disables cost reporting (pi would show $0.00). */
   rubPerUsd: number
+  /** OpenAI-style gateway URL; Claude gets an SDK-specific model override. */
+  baseUrl?: string
 }
 
 /** Convert normalized catalog entries into pi provider model definitions. */
@@ -115,12 +132,18 @@ export function toProviderModels(
     const definition: ProviderModelDefinition = {
       id: model.id,
       name: `${model.name}${MODEL_NAME_SUFFIX}`,
-      api: PROVIDER_API,
+      api: isAnthropicModel(model) ? ANTHROPIC_API : PROVIDER_API,
       reasoning: model.reasoning,
       input: [...model.input],
       cost: toCost(model.costRub, options.rubPerUsd),
       contextWindow: model.contextWindow > 0 ? model.contextWindow : FALLBACK_CONTEXT_WINDOW,
       maxTokens: model.maxTokens > 0 ? model.maxTokens : FALLBACK_MAX_TOKENS,
+    }
+
+    // Native Messages enables budget-based thinking through pi's built-in
+    // implementation. Do not apply an OpenAI thinkingFormat to Claude.
+    if (isAnthropicModel(model)) {
+      definition.baseUrl = anthropicBaseUrl(options.baseUrl ?? DEFAULT_BASE_URL)
     }
 
     const thinkingLevelMap = thinkingLevelMapForModel(model)

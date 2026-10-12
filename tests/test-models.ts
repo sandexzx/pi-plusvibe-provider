@@ -3,6 +3,9 @@ import assert from "node:assert/strict"
 import { SNAPSHOT_MODELS } from "../src/catalog-snapshot.ts"
 import { ZERO_COST } from "../src/catalog.ts"
 import {
+  ANTHROPIC_API,
+  anthropicBaseUrl,
+  isAnthropicModel,
   FALLBACK_CONTEXT_WINDOW,
   FALLBACK_MAX_TOKENS,
   MODEL_NAME_SUFFIX,
@@ -53,9 +56,46 @@ test("toProviderModels falls back to safe limits for malformed entries", () => {
   assert.equal(model.maxTokens, FALLBACK_MAX_TOKENS)
 })
 
-test("toProviderModels always targets pi's openai-completions API", () => {
+test("toProviderModels keeps non-Claude models on openai-completions", () => {
   for (const model of toProviderModels(SAMPLE, { rubPerUsd: 0 })) {
     assert.equal(model.api, PROVIDER_API)
+  }
+})
+
+test("Claude models use native Messages with an SDK-specific base URL", () => {
+  for (const id of ["anthropic/claude-haiku-4.5", "claude-haiku-5.5", "claude-sonnet-5.5", "anthropic/claude-opus-5"]) {
+    const entry: CatalogModel = { ...SAMPLE[0], id, thinkingLevels: ["low", "high"] }
+    const [model] = toProviderModels([entry], { rubPerUsd: 100 })
+    assert.equal(model.api, ANTHROPIC_API, id)
+    assert.equal(model.baseUrl, "https://plusvibeapi.ru", id)
+    assert.equal(model.reasoning, true)
+    assert.equal("compat" in model, false)
+    assert.equal("thinkingLevelMap" in model, false)
+    assert.deepEqual(model.cost, { input: 1, output: 5, cacheRead: 0.25, cacheWrite: 2 })
+    const [mirror] = toProviderModels([entry], { rubPerUsd: 0, baseUrl: "https://gw.plusvibeapi.ru/v1/" })
+    assert.equal(mirror.baseUrl, "https://gw.plusvibeapi.ru")
+  }
+})
+
+test("Claude detection supports maker metadata without matching unrelated names", () => {
+  assert.equal(isAnthropicModel({ ...SAMPLE[0], maker: " Anthropic " }), true)
+  assert.equal(isAnthropicModel({ ...SAMPLE[0], name: "Claude-inspired model" }), false)
+  assert.equal(isAnthropicModel({ ...SAMPLE[0], id: "vendor/not-claude-model" }), false)
+})
+
+test("Anthropic URL normalization preserves gateway path prefixes", () => {
+  assert.equal(anthropicBaseUrl(" https://example.com/proxy/v1/// "), "https://example.com/proxy")
+  assert.equal(anthropicBaseUrl("https://example.com/proxy/"), "https://example.com/proxy")
+  assert.equal(anthropicBaseUrl("https://example.com"), "https://example.com")
+  assert.equal(anthropicBaseUrl("https://example.com/v1beta/"), "https://example.com/v1beta")
+})
+
+test("the bundled snapshot routes Claude natively and leaves other models unchanged", () => {
+  const models = toProviderModels(SNAPSHOT_MODELS, { rubPerUsd: 0 })
+  assert.ok(SNAPSHOT_MODELS.some(isAnthropicModel))
+  for (const [i, model] of models.entries()) {
+    assert.equal(model.api, isAnthropicModel(SNAPSHOT_MODELS[i]) ? ANTHROPIC_API : PROVIDER_API, model.id)
+    if (!isAnthropicModel(SNAPSHOT_MODELS[i])) assert.equal("baseUrl" in model, false, model.id)
   }
 })
 

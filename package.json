@@ -20,7 +20,7 @@
   "files": ["index.ts", "src/", "scripts/", "README.md", "README.ru.md", "docs/", "CONTRIBUTING.md", "CONTRIBUTING.ru.md", "LICENSE"],
   "scripts": {
     "typecheck": "tsc --noEmit",
-    "test": "npm run typecheck && tsx tests/test-catalog.ts && tsx tests/test-rate.ts && tsx tests/test-api-key.ts && tsx tests/test-models.ts && tsx tests/test-balance.ts && tsx tests/test-oauth.ts",
+    "test": "npm run typecheck && tsx tests/test-catalog.ts && tsx tests/test-rate.ts && tsx tests/test-api-key.ts && tsx tests/test-models.ts && tsx tests/test-anthropic.ts && tsx tests/test-balance.ts && tsx tests/test-oauth.ts",
     "sync:catalog": "tsx scripts/sync-catalog.ts"
   },
   "pi": {

@@ -1,9 +1,9 @@
 /**
  * Pi provider extension for PlusVibeAPI (plusvibeapi.ru).
  *
- * PlusVibeAPI is an OpenAI-compatible gateway, so the extension delegates the
- * wire protocol to pi's built-in `openai-completions` implementation and only
- * supplies the endpoint, credentials, and the model catalog.
+ * The extension delegates wire protocols to pi's built-in implementations:
+ * `anthropic-messages` for Claude and `openai-completions` for other models.
+ * It supplies endpoints, credentials, and the model catalog.
  *
  * Model data comes from the vendor's own Pi integration file
  * (`/api/integrations/pi.models.json`) and is enriched with ruble prices from
@@ -56,7 +56,7 @@ export default function plusvibeProvider(pi: ExtensionAPI): void {
   let lastCatalog: unknown
 
   /** Build the model list from the bundled snapshot at the current rate. */
-  const snapshotModels = () => toProviderModels(SNAPSHOT_MODELS, { rubPerUsd })
+  const snapshotModels = () => toProviderModels(SNAPSHOT_MODELS, { rubPerUsd, baseUrl })
 
   const config: ProviderConfig = {
     baseUrl,
@@ -99,7 +99,7 @@ export default function plusvibeProvider(pi: ExtensionAPI): void {
         try {
           const merged = mergeCatalog(lastVendorModels, lastCatalog)
           if (merged.length > 0) {
-            liveModels = toProviderModels(merged, { rubPerUsd })
+            liveModels = toProviderModels(merged, { rubPerUsd, baseUrl })
             return liveModels
           }
         } catch {

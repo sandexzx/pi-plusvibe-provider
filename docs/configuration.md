@@ -67,7 +67,30 @@ The rate sources require attribution: [cbr-xml-daily.ru](https://www.cbr-xml-dai
 
 ### About the reasoning level
 
-Pi passes the reasoning level in the `reasoning_effort` field. On this router, DeepSeek models
+Claude models use pi's native `anthropic-messages` implementation and `/v1/messages`.
+Pi enables extended thinking with `thinking: {type: "enabled", budget_tokens: …}`;
+`/thinking off` sends `thinking: {type: "disabled"}`. The budget is managed by pi.
+Catalog `thinkingLevels` effort mappings are not applied to Claude's native budgets.
+The extension removes the trailing `/v1` from the model's base URL because the Anthropic
+SDK adds `/v1/messages` itself; mirror URLs and gateway path prefixes are preserved.
+The same credentials and `/login` work for both protocols.
+
+Visible thinking still depends on the upstream response. In manual HTTP/SSE checks,
+Haiku 5.5 and Sonnet 5.5 returned empty `thinking_delta` text even with native thinking
+enabled. Sonnet was also checked through pi's native handler with the same result.
+These were manual checks, not the mocked regression tests in `tests/test-anthropic.ts`.
+To reproduce, POST to `/v1/messages` with `stream: true`, `max_tokens: 2048`,
+`thinking: {type: "enabled", budget_tokens: 1024}`, and model `claude-sonnet-5.5`
+(or `claude-haiku-5.5`), plus a user message, for example
+`messages: [{role: "user", content: "Find the smallest positive n: n mod 7 = 3, n mod 11 = 5, n mod 13 = 7. Verify."}]`.
+Authenticate with `x-api-key` and set
+`anthropic-version: 2023-06-01`. Inspect the `thinking_delta` events in the SSE response.
+Switching protocols cannot recover reasoning text that the server does not send.
+See the vendor's
+[reasoning documentation](https://plusvibeapi.ru/docs/reasoning).
+
+Other models use Chat Completions. Pi normally passes the reasoning level in the
+`reasoning_effort` field. On this router, DeepSeek models
 behave unusually: the values `none`, `minimal` and `low` **turn reasoning off**, while `medium`,
 `high`, `xhigh` and `max` turn it on. The router ignores DeepSeek's native
 `thinking: {type: …}` field.
@@ -80,5 +103,5 @@ block. The extension therefore, for DeepSeek models:
 - for the `off` level, sends `effort: none`, which really disables reasoning.
 
 Result: any level except `off` produces a reasoning block, `off` disables it.
-Models from other vendors behave as before (for example, `openai/gpt-5.6-luna` with `low` produces
+Other non-Claude models behave as before (for example, `openai/gpt-5.6-luna` with `low` produces
 less reasoning rather than none).
