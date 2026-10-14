@@ -5,30 +5,30 @@
  *   https://plusvibeapi.ru/api/integrations/pi.models.json
  *   https://plusvibeapi.ru/api/catalog
  *
- * Generated: 2026-10-12T08:34:39.974Z
+ * Generated: 2026-10-14T07:13:11.311Z
  */
 
 import type { CatalogModel } from "./catalog.ts"
 
-export const SNAPSHOT_GENERATED_AT = "2026-10-12T08:34:39.974Z"
+export const SNAPSHOT_GENERATED_AT = "2026-10-14T07:13:11.311Z"
 
 export const SNAPSHOT_MODELS: CatalogModel[] = [
   {
     "id": "anthropic/claude-haiku-4.5",
     "name": "Claude Haiku 4.5",
-    "reasoning": true,
+    "reasoning": false,
     "input": [
       "text",
       "image"
     ],
-    "contextWindow": 200000,
-    "maxTokens": 16000,
+    "contextWindow": 1000000,
+    "maxTokens": 32000,
     "maker": "Anthropic",
     "costRub": {
-      "input": 30,
-      "output": 144,
-      "cacheRead": 3,
-      "cacheWrite": 38
+      "input": 17.8,
+      "output": 89,
+      "cacheRead": 2,
+      "cacheWrite": 22
     }
   },
   {
@@ -79,10 +79,10 @@ export const SNAPSHOT_MODELS: CatalogModel[] = [
     "maxTokens": 32000,
     "maker": "Anthropic",
     "costRub": {
-      "input": 75.43,
-      "output": 377.15,
+      "input": 76,
+      "output": 378,
       "cacheRead": 8,
-      "cacheWrite": 75
+      "cacheWrite": 95
     }
   },
   {
@@ -97,28 +97,10 @@ export const SNAPSHOT_MODELS: CatalogModel[] = [
     "maxTokens": 32000,
     "maker": "Anthropic",
     "costRub": {
-      "input": 49.03,
-      "output": 245.15,
+      "input": 49,
+      "output": 245,
       "cacheRead": 5,
-      "cacheWrite": 49
-    }
-  },
-  {
-    "id": "claude-fable-5",
-    "name": "Claude Fable 5",
-    "reasoning": true,
-    "input": [
-      "text",
-      "image"
-    ],
-    "contextWindow": 1000000,
-    "maxTokens": 32000,
-    "maker": "Anthropic",
-    "costRub": {
-      "input": 163.43,
-      "output": 817.15,
-      "cacheRead": 4,
-      "cacheWrite": 204
+      "cacheWrite": 61
     }
   },
   {
@@ -133,10 +115,10 @@ export const SNAPSHOT_MODELS: CatalogModel[] = [
     "maxTokens": 32000,
     "maker": "Anthropic",
     "costRub": {
-      "input": 251.43,
-      "output": 1257.15,
-      "cacheRead": 6,
-      "cacheWrite": 314
+      "input": 535,
+      "output": 2671,
+      "cacheRead": 54,
+      "cacheWrite": 669
     }
   },
   {
@@ -207,7 +189,7 @@ export const SNAPSHOT_MODELS: CatalogModel[] = [
     "costRub": {
       "input": 109,
       "output": 548,
-      "cacheRead": 11,
+      "cacheRead": 5,
       "cacheWrite": 136
     }
   },
@@ -225,7 +207,7 @@ export const SNAPSHOT_MODELS: CatalogModel[] = [
     "costRub": {
       "input": 55,
       "output": 274,
-      "cacheRead": 6,
+      "cacheRead": 3,
       "cacheWrite": 55
     }
   },
@@ -252,10 +234,10 @@ export const SNAPSHOT_MODELS: CatalogModel[] = [
     "maxTokens": 32000,
     "maker": "DeepSeek",
     "costRub": {
-      "input": 1.14,
-      "output": 4.53,
-      "cacheRead": 0.11,
-      "cacheWrite": 1
+      "input": 1.91,
+      "output": 7.63,
+      "cacheRead": 0.19,
+      "cacheWrite": 2
     }
   },
   {
@@ -377,10 +359,10 @@ export const SNAPSHOT_MODELS: CatalogModel[] = [
     "maxTokens": 32000,
     "maker": "Google",
     "costRub": {
-      "input": 11.33,
-      "output": 67.96,
-      "cacheRead": 1,
-      "cacheWrite": 11
+      "input": 8.12,
+      "output": 48.71,
+      "cacheRead": 0.81,
+      "cacheWrite": 0
     }
   },
   {
@@ -399,24 +381,6 @@ export const SNAPSHOT_MODELS: CatalogModel[] = [
       "output": 67.06,
       "cacheRead": 1,
       "cacheWrite": 0
-    }
-  },
-  {
-    "id": "google/gemini-3.7-flash",
-    "name": "Gemini 3.7 Flash",
-    "reasoning": true,
-    "input": [
-      "text",
-      "image"
-    ],
-    "contextWindow": 1048576,
-    "maxTokens": 32000,
-    "maker": "Google",
-    "costRub": {
-      "input": 4.4,
-      "output": 22,
-      "cacheRead": 0.44,
-      "cacheWrite": 4
     }
   },
   {
