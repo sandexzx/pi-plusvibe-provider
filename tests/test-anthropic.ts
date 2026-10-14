@@ -111,7 +111,11 @@ test("actual extension registration preserves per-model routing through Pi's reg
     assert.ok(config)
     assert.equal(config.api, "openai-completions")
     assert.equal(config.baseUrl, "https://gateway.example/proxy/v1")
-    const claude = registry.getAll().find((entry) => entry.provider === "plusvibe" && entry.id.includes("haiku"))
+    // Pick a Claude entry that genuinely has reasoning enabled: the snapshot order can change,
+    // and a haiku id alone does not guarantee that native thinking is on.
+    const claude = registry
+      .getAll()
+      .find((entry) => entry.provider === "plusvibe" && entry.api === "anthropic-messages" && entry.reasoning === true)
     const other = registry.getAll().find((entry) => entry.provider === "plusvibe" && entry.id.startsWith("openai/"))
     assert.ok(claude)
     assert.ok(other)
