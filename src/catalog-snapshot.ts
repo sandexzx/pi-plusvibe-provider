@@ -5,32 +5,14 @@
  *   https://plusvibeapi.ru/api/integrations/pi.models.json
  *   https://plusvibeapi.ru/api/catalog
  *
- * Generated: 2026-10-14T07:13:11.311Z
+ * Generated: 2026-10-16T18:12:15.436Z
  */
 
 import type { CatalogModel } from "./catalog.ts"
 
-export const SNAPSHOT_GENERATED_AT = "2026-10-14T07:13:11.311Z"
+export const SNAPSHOT_GENERATED_AT = "2026-10-16T18:12:15.436Z"
 
 export const SNAPSHOT_MODELS: CatalogModel[] = [
-  {
-    "id": "anthropic/claude-haiku-4.5",
-    "name": "Claude Haiku 4.5",
-    "reasoning": false,
-    "input": [
-      "text",
-      "image"
-    ],
-    "contextWindow": 1000000,
-    "maxTokens": 32000,
-    "maker": "Anthropic",
-    "costRub": {
-      "input": 17.8,
-      "output": 89,
-      "cacheRead": 2,
-      "cacheWrite": 22
-    }
-  },
   {
     "id": "anthropic/claude-opus-4.8",
     "name": "Claude Opus 4.8",
@@ -285,7 +267,7 @@ export const SNAPSHOT_MODELS: CatalogModel[] = [
       "image"
     ],
     "contextWindow": 262144,
-    "maxTokens": 32000,
+    "maxTokens": 16000,
     "maker": "Другие",
     "costRub": {
       "input": 12.75,
@@ -631,7 +613,7 @@ export const SNAPSHOT_MODELS: CatalogModel[] = [
     "input": [
       "text"
     ],
-    "contextWindow": 1000000,
+    "contextWindow": 196000,
     "maxTokens": 32000,
     "maker": "MiniMax",
     "costRub": {
@@ -850,7 +832,7 @@ export const SNAPSHOT_MODELS: CatalogModel[] = [
       "text"
     ],
     "contextWindow": 128000,
-    "maxTokens": 16384,
+    "maxTokens": 32000,
     "maker": "OpenAI",
     "costRub": {
       "input": 6.59,
@@ -911,23 +893,6 @@ export const SNAPSHOT_MODELS: CatalogModel[] = [
       "output": 835.52,
       "cacheRead": 0,
       "cacheWrite": 0
-    }
-  },
-  {
-    "id": "qwen/qwen3.6-max-preview",
-    "name": "Qwen 3.6 Max Preview",
-    "reasoning": true,
-    "input": [
-      "text"
-    ],
-    "contextWindow": 131072,
-    "maxTokens": 32000,
-    "maker": "Alibaba (Qwen)",
-    "costRub": {
-      "input": 81.72,
-      "output": 490.29,
-      "cacheRead": 8,
-      "cacheWrite": 82
     }
   },
   {
@@ -1158,7 +1123,7 @@ export const SNAPSHOT_MODELS: CatalogModel[] = [
       "text",
       "image"
     ],
-    "contextWindow": 262144,
+    "contextWindow": 1024000,
     "maxTokens": 32000,
     "maker": "Zhipu AI",
     "costRub": {
