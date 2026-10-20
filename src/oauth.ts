@@ -14,6 +14,7 @@
 
 import { looksLikeApiKey, normalizeApiKey, sanitizeRemoteText } from "./api-key.ts"
 import { baseUrlFromEnv, combineSignals, normalizeBaseUrl } from "./api.ts"
+import { gatewayFilePath, gatewaySwitchHint, resolveGateway } from "./gateway.ts"
 
 /** Where users create and copy keys. */
 export const DASHBOARD_URL = "https://plusvibeapi.ru/"
@@ -132,7 +133,9 @@ export async function validateApiKey(key: string, options: ValidateOptions = {})
     return { ok: false, status: response.status, message: errorMessageFromBody(body, response.status) }
   } catch (error) {
     const detail = sanitizeRemoteText(error instanceof Error ? error.message : String(error))
-    return { ok: false, status: 0, message: `Не удалось связаться с PlusVibeAPI: ${detail}` }
+    // An explicit baseUrl (tests, callers) is not the saved gateway, so no switch hint.
+    const hint = options.baseUrl === undefined ? gatewaySwitchHint(resolveGateway(process.env, gatewayFilePath())) : undefined
+    return { ok: false, status: 0, message: `Не удалось связаться с PlusVibeAPI: ${detail}${hint ? `\n${hint}` : ""}` }
   }
 }
 

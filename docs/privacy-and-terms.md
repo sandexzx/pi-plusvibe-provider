@@ -24,6 +24,11 @@ written agreement. Do not bypass access controls or service limits.
 
 ## Data and privacy
 
+The built-in gateway hosts are `plusvibeapi.ru` (main) and `gw.plusvibeapi.ru`
+(mirror). The selected host receives API keys and model requests, as well as
+public catalog requests. A custom `PLUSVIBE_BASE_URL` changes the API destination
+but leaves public catalog requests on the main host.
+
 Requests are sent from your machine to the configured API gateway. When you use PlusVibeAPI, the
 operator forwards request content to model providers outside Russia, including providers in the
 USA, China and the EU, as described in its terms.

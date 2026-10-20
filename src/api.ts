@@ -6,13 +6,15 @@
  */
 
 import { sanitizeRemoteText } from "./api-key.ts"
-import { CATALOG_URL, DEFAULT_BASE_URL, ENV_BASE_URL, PI_MODELS_URL, type CatalogModel } from "./catalog.ts"
+import { CATALOG_URL, DEFAULT_BASE_URL, PI_MODELS_URL, type CatalogModel } from "./catalog.ts"
+import { gatewayFilePath, resolveGateway } from "./gateway.ts"
 
 export interface FetchJsonOptions {
   fetchImpl?: typeof fetch
   signal?: AbortSignal
   timeoutMs?: number
   headers?: Record<string, string>
+  origin?: string
 }
 
 /** Normalize `/v1`-style base urls so callers can concatenate paths. */
@@ -23,17 +25,10 @@ export function normalizeBaseUrl(raw: string): string {
 }
 
 /**
- * Resolve the API base url, honoring `PLUSVIBE_BASE_URL`.
- *
- * Point that variable at `https://gw.plusvibeapi.ru/v1` to use the mirror
- * gateway; it is not switched to automatically.
+ * Resolve the current API base URL: environment override, saved gateway, main.
  */
 export function baseUrlFromEnv(env: Record<string, string | undefined> = process.env): string {
-  const configured = env[ENV_BASE_URL]
-  if (typeof configured === "string" && configured.trim().length > 0) {
-    return normalizeBaseUrl(configured)
-  }
-  return DEFAULT_BASE_URL
+  return resolveGateway(env, gatewayFilePath()).baseUrl
 }
 
 /**
@@ -99,12 +94,12 @@ export async function fetchText(url: string, options: FetchJsonOptions = {}): Pr
 
 /** The vendor's official pi model list. */
 export function fetchPiModels(options: FetchJsonOptions = {}): Promise<unknown> {
-  return fetchJson(PI_MODELS_URL, { timeoutMs: 30_000, ...options })
+  return fetchJson(new URL(new URL(PI_MODELS_URL).pathname, options.origin ?? PI_MODELS_URL).href, { timeoutMs: 30_000, ...options })
 }
 
 /** Prices and capability metadata. */
 export function fetchCatalog(options: FetchJsonOptions = {}): Promise<unknown> {
-  return fetchJson(CATALOG_URL, { timeoutMs: 60_000, ...options })
+  return fetchJson(new URL(new URL(CATALOG_URL).pathname, options.origin ?? CATALOG_URL).href, { timeoutMs: 60_000, ...options })
 }
 
 export interface BalanceRequest {

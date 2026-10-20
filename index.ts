@@ -16,10 +16,21 @@
 
 import type { ExtensionAPI, ExtensionCommandContext, ProviderConfig } from "@earendil-works/pi-coding-agent"
 
-import { baseUrlFromEnv, fetchBalance, fetchCatalog, fetchPiModels } from "./src/api.ts"
+import { fetchBalance, fetchCatalog, fetchPiModels } from "./src/api.ts"
 import { apiKeyTemplate, resolveApiKeyFromSources } from "./src/api-key.ts"
 import { formatBalance } from "./src/balance.ts"
-import { PROVIDER_ID, mergeCatalog } from "./src/catalog.ts"
+import { PROVIDER_ID, mergeCatalog, type CatalogModel } from "./src/catalog.ts"
+import {
+  catalogOrigin,
+  describeGateway,
+  gatewayFilePath,
+  gatewaySwitchHint,
+  otherGateway,
+  resolveGateway,
+  writeGateway,
+  type Gateway,
+  type ResolvedGateway,
+} from "./src/gateway.ts"
 import { SNAPSHOT_MODELS } from "./src/catalog-snapshot.ts"
 import { toProviderModels, type ProviderModelDefinition } from "./src/models.ts"
 import { getApiKey, login, refreshToken } from "./src/oauth.ts"
@@ -36,7 +47,8 @@ import {
 
 export default function plusvibeProvider(pi: ExtensionAPI): void {
   const env = process.env
-  const baseUrl = baseUrlFromEnv(env)
+  const gatewayPath = gatewayFilePath()
+  let resolvedGateway = resolveGateway(env, gatewayPath)
   const cachePath = rateCachePath(env)
   const rateMode = rateModeFromEnv(env)
 
@@ -54,12 +66,14 @@ export default function plusvibeProvider(pi: ExtensionAPI): void {
   let liveModels: ProviderModelDefinition[] | undefined
   let lastVendorModels: unknown
   let lastCatalog: unknown
+  let lastMerged: CatalogModel[] | undefined
+  let gatewayRevision = 0
 
   /** Build the model list from the bundled snapshot at the current rate. */
-  const snapshotModels = () => toProviderModels(SNAPSHOT_MODELS, { rubPerUsd, baseUrl })
+  const snapshotModels = () => toProviderModels(SNAPSHOT_MODELS, { rubPerUsd, baseUrl: currentGateway().baseUrl })
 
   const config: ProviderConfig = {
-    baseUrl,
+    baseUrl: currentGateway().baseUrl,
     api: "openai-completions",
 
     // A literal key (environment or key file) wins; otherwise the
@@ -81,11 +95,16 @@ export default function plusvibeProvider(pi: ExtensionAPI): void {
     async refreshModels(context) {
       if (!context.allowNetwork) return liveModels ?? snapshotModels()
 
+      const revision = gatewayRevision
+      const origin = catalogOrigin(currentGateway())
       const [piResult, catalogResult, rateResult] = await Promise.allSettled([
-        fetchPiModels({ signal: context.signal }),
-        fetchCatalog({ signal: context.signal }),
+        fetchPiModels({ signal: context.signal, origin }),
+        fetchCatalog({ signal: context.signal, origin }),
         refreshRate({ env, cachePath, signal: context.signal }),
       ])
+
+      // Ignore results from requests started before a gateway switch.
+      if (revision !== gatewayRevision) return liveModels ?? snapshotModels()
 
       if (rateResult.status === "fulfilled" && rateResult.value) {
         rateQuote = rateResult.value
@@ -99,7 +118,8 @@ export default function plusvibeProvider(pi: ExtensionAPI): void {
         try {
           const merged = mergeCatalog(lastVendorModels, lastCatalog)
           if (merged.length > 0) {
-            liveModels = toProviderModels(merged, { rubPerUsd, baseUrl })
+            lastMerged = merged
+            liveModels = toProviderModels(merged, { rubPerUsd, baseUrl: currentGateway().baseUrl })
             return liveModels
           }
         } catch {
@@ -121,6 +141,56 @@ export default function plusvibeProvider(pi: ExtensionAPI): void {
   }
 
   pi.registerProvider(PROVIDER_ID, config)
+
+  function currentGateway(): ResolvedGateway {
+    return { ...resolvedGateway }
+  }
+
+  /** Persist and apply a gateway; environment overrides refuse switching. */
+  function switchGateway(gateway: Gateway): { applied: "live" | "restart" | "env" } {
+    if (resolveGateway(env, gatewayPath).kind === "env") return { applied: "env" }
+    writeGateway(gatewayPath, gateway)
+    resolvedGateway = resolveGateway(env, gatewayPath)
+    gatewayRevision++
+    if (lastMerged) {
+      liveModels = toProviderModels(lastMerged, { rubPerUsd, baseUrl: currentGateway().baseUrl })
+    }
+    config.baseUrl = currentGateway().baseUrl
+    config.models = liveModels ?? snapshotModels()
+    pi.registerProvider(PROVIDER_ID, config)
+    return { applied: "live" }
+  }
+
+  // A toggle, not an argument parser: each run flips main ↔ mirror.
+  pi.registerCommand("plusvibe-gateway", {
+    description: "Переключить шлюз PlusVibeAPI: основной ↔ зеркало",
+    handler: async (_args: string, ctx: ExtensionCommandContext): Promise<void> => {
+      const current = currentGateway()
+      if (current.kind === "env") {
+        ctx.ui.notify(
+          `Адрес шлюза задан переменной PLUSVIBE_BASE_URL (${current.baseUrl}), переключение отключено.\n` +
+            "Уберите переменную и перезапустите Pi, чтобы переключаться командой.",
+          "warning",
+        )
+        return
+      }
+
+      const target = otherGateway(current.gateway)
+      let applied: "live" | "restart" | "env"
+      try {
+        applied = switchGateway(target).applied
+      } catch (error) {
+        const detail = error instanceof Error ? error.message : String(error)
+        ctx.ui.notify(`Не удалось сохранить выбор шлюза PlusVibeAPI.\n${detail}`, "error")
+        return
+      }
+
+      const lines = [`PlusVibeAPI: теперь ${describeGateway(target)}.`]
+      if (applied === "restart") lines.push("Перезапустите Pi, чтобы применить.")
+      lines.push(`Вернуть ${describeGateway(current.gateway)}: /plusvibe-gateway`)
+      ctx.ui.notify(lines.join("\n"), "info")
+    },
+  })
 
   pi.registerCommand("plusvibe-balance", {
     description: "Показать баланс PlusVibeAPI",
@@ -144,16 +214,23 @@ export default function plusvibeProvider(pi: ExtensionAPI): void {
         return
       }
 
-      const result = await fetchBalance({ apiKey: key, baseUrl: baseUrlFromEnv(env) })
+      const result = await fetchBalance({ apiKey: key, baseUrl: currentGateway().baseUrl })
 
       if (!result.ok) {
-        ctx.ui.notify(`Не удалось получить баланс PlusVibeAPI.\n${result.error ?? `HTTP ${result.status}`}`, "error")
+        const lines = ["Не удалось получить баланс PlusVibeAPI.", result.error ?? `HTTP ${result.status}`]
+        // Status 0 is a transport failure; 502-504 come from the gateway's nginx.
+        const unreachable = result.status === 0 || (result.status >= 502 && result.status <= 504)
+        const hint = unreachable ? gatewaySwitchHint(currentGateway()) : undefined
+        if (hint) lines.push(hint)
+        ctx.ui.notify(lines.join("\n"), "error")
         return
       }
 
       const lines = ["PlusVibeAPI", ...formatBalance(result.data)]
       const rateLine = describeRate(rateQuote, rubPerUsd)
       if (rateLine) lines.push(rateLine)
+      const gateway = currentGateway()
+      lines.push(`Шлюз: ${gateway.kind === "named" ? describeGateway(gateway.gateway) : gateway.baseUrl}`)
 
       ctx.ui.notify(lines.join("\n"), "info")
     },

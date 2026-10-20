@@ -59,11 +59,14 @@ Prefer an environment variable or a key file? See [configuration](docs/configura
 | --- | --- |
 | `/model` | Choose a model; search for `plusvibe`. |
 | `/thinking` | Set the reasoning level for a supported model. |
+| `/plusvibe-gateway` | Switch between the main gateway and the mirror. |
 | `/plusvibe-balance` | Show your PlusVibeAPI balance and the configured exchange rate, when available. |
 | `/login` | Add and verify your API key. |
 | `/logout` | Remove the key saved through `/login`. |
 
 ## Good to know
+
+- **Cannot connect, for example from abroad?** Use `/plusvibe-gateway` to switch to the mirror and back. See [gateway configuration](docs/configuration.md#gateway--mirror) for manual setup.
 
 - **Chat models only.** Image input is available on supported models. Image generation, embeddings, video, search and speech-to-text endpoints are not integrated.
 - **Costs are estimates.** PlusVibeAPI lists prices in rubles; Pi displays dollars. Conversion uses an automatically fetched exchange rate. `$0` can mean no usable rate, not free inference. Check the dashboard for actual charges.

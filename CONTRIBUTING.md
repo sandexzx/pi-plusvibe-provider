@@ -31,6 +31,7 @@ Structure:
 | `src/api.ts` | HTTP requests (models, catalog, balance) with timeouts. |
 | `src/api-key.ts` | Key parsing and normalization, secret masking in third-party error messages. |
 | `src/models.ts` | Conversion of catalog entries into Pi model definitions. |
+| `src/gateway.ts` | Persistent main/mirror choice, environment precedence and catalog origins. |
 | `src/rate.ts` | Automatic ruble rate: CBR sources, cache, priorities. |
 | `src/balance.ts` | Formatting of the `/v1/balance` response. |
 | `src/oauth.ts` | The `/login` flow (key entry and verification). |

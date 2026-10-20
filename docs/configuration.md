@@ -4,6 +4,31 @@
 
 The shell examples below use Bash/Zsh. Avoid putting real keys in commands saved to shell history. Prefer `/login` for everyday use.
 
+## Gateway / mirror
+
+Two named gateways are available: `main` (`https://plusvibeapi.ru/v1`) and `mirror`
+(`https://gw.plusvibeapi.ru/v1`). There is no automatic failover.
+
+The choice is saved in `~/.config/plusvibe/gateway.json`, for example:
+
+```json
+{ "gateway": "mirror" }
+```
+
+A missing, unreadable or invalid file selects `main`. For manual file edits, restart Pi.
+The `/plusvibe-gateway` command toggles main ↔ mirror and saves the choice. It applies
+immediately, without restarting Pi, for both Claude and other models.
+`/plusvibe-balance` shows the active gateway.
+
+Priority: non-empty `PLUSVIBE_BASE_URL` > saved gateway > `main`. Whitespace-only
+values are ignored. With the environment override set, switching is refused and
+custom proxies keep their existing behavior. Remove the override to use the saved choice.
+
+Public catalog requests follow the named gateway. With a custom environment URL,
+public catalogs still use `https://plusvibeapi.ru`. The offline catalog sync script
+also continues to use the main host. Your key and model requests go to the selected
+API gateway; only choose a custom URL you trust.
+
 ## API key
 
 Keys start with `sk-pv-` and are created in the dashboard at https://plusvibeapi.ru/.
@@ -30,7 +55,7 @@ file. Run `/logout` to change the key (or pass `--api-key` for a single run).
 | --- | --- |
 | `PLUSVIBE_API_KEY` | API key (`sk-pv-…`). |
 | `PLUSVIBE_API_KEY_FILE` | Path to the key file. Defaults to `~/.config/plusvibe/key`. |
-| `PLUSVIBE_BASE_URL` | An alternative gateway address; defaults to `https://plusvibeapi.ru/v1`. Mirror: `https://gw.plusvibeapi.ru/v1`. |
+| `PLUSVIBE_BASE_URL` | Overrides the saved gateway. Default: `https://plusvibeapi.ru/v1`; mirror: `https://gw.plusvibeapi.ru/v1`. |
 | `PLUSVIBE_RUB_PER_USD` | Manual ruble rate. When unset, the rate is fetched from the network (see below). `0` or `off` disables cost estimation (Pi may show `$0`). |
 | `PLUSVIBE_CACHE_DIR` | Directory for the rate file. Defaults to `$XDG_CACHE_HOME/pi-plusvibe-provider` or `~/.cache/pi-plusvibe-provider`. |
 

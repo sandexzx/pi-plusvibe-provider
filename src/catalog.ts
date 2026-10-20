@@ -22,8 +22,8 @@ export const PROVIDER_ID = "plusvibe"
 export const DEFAULT_BASE_URL = "https://plusvibeapi.ru/v1"
 
 /**
- * Mirror gateway. It is not selected automatically: point `PLUSVIBE_BASE_URL`
- * at it when the primary host is unreachable.
+ * Mirror gateway, selectable through the saved gateway setting.
+ * Never selected automatically.
  */
 export const FALLBACK_BASE_URL = "https://gw.plusvibeapi.ru/v1"
 
