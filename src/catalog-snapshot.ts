@@ -5,14 +5,32 @@
  *   https://plusvibeapi.ru/api/integrations/pi.models.json
  *   https://plusvibeapi.ru/api/catalog
  *
- * Generated: 2026-10-16T18:12:15.436Z
+ * Generated: 2026-10-22T10:36:05.820Z
  */
 
 import type { CatalogModel } from "./catalog.ts"
 
-export const SNAPSHOT_GENERATED_AT = "2026-10-16T18:12:15.436Z"
+export const SNAPSHOT_GENERATED_AT = "2026-10-22T10:36:05.820Z"
 
 export const SNAPSHOT_MODELS: CatalogModel[] = [
+  {
+    "id": "anthropic/claude-haiku-4.5",
+    "name": "Claude Haiku 4.5",
+    "reasoning": true,
+    "input": [
+      "text",
+      "image"
+    ],
+    "contextWindow": 200000,
+    "maxTokens": 16000,
+    "maker": "Anthropic",
+    "costRub": {
+      "input": 17.8,
+      "output": 89,
+      "cacheRead": 2,
+      "cacheWrite": 22
+    }
+  },
   {
     "id": "anthropic/claude-opus-4.8",
     "name": "Claude Opus 4.8",
@@ -84,6 +102,17 @@ export const SNAPSHOT_MODELS: CatalogModel[] = [
       "cacheRead": 5,
       "cacheWrite": 61
     }
+  },
+  {
+    "id": "claude-fable-5",
+    "name": "Claude Fable 5",
+    "reasoning": true,
+    "input": [
+      "text",
+      "image"
+    ],
+    "contextWindow": 1000000,
+    "maxTokens": 32000
   },
   {
     "id": "claude-fable-5-1",
@@ -212,7 +241,7 @@ export const SNAPSHOT_MODELS: CatalogModel[] = [
       "text",
       "image"
     ],
-    "contextWindow": 1000000,
+    "contextWindow": 900000,
     "maxTokens": 32000,
     "maker": "DeepSeek",
     "costRub": {
@@ -221,6 +250,17 @@ export const SNAPSHOT_MODELS: CatalogModel[] = [
       "cacheRead": 0.19,
       "cacheWrite": 2
     }
+  },
+  {
+    "id": "deepseek-v4.1-flash-1017",
+    "name": "DeepSeek V4.1 Flash 1017",
+    "reasoning": true,
+    "input": [
+      "text",
+      "image"
+    ],
+    "contextWindow": 900000,
+    "maxTokens": 32000
   },
   {
     "id": "deepseek/deepseek-v4-flash-0731",
@@ -248,7 +288,7 @@ export const SNAPSHOT_MODELS: CatalogModel[] = [
       "text",
       "image"
     ],
-    "contextWindow": 1048576,
+    "contextWindow": 900000,
     "maxTokens": 32000,
     "maker": "DeepSeek",
     "costRub": {
@@ -259,6 +299,50 @@ export const SNAPSHOT_MODELS: CatalogModel[] = [
     }
   },
   {
+    "id": "doubao-seed-2.0-code",
+    "name": "Doubao Seed 2.0 Code (ByteDance)",
+    "reasoning": true,
+    "input": [
+      "text",
+      "image"
+    ],
+    "contextWindow": 262144,
+    "maxTokens": 32000
+  },
+  {
+    "id": "doubao-seed-2.0-lite",
+    "name": "Doubao Seed 2.0 Lite (ByteDance)",
+    "reasoning": true,
+    "input": [
+      "text",
+      "image"
+    ],
+    "contextWindow": 262144,
+    "maxTokens": 32000
+  },
+  {
+    "id": "doubao-seed-2.0-mini",
+    "name": "Doubao Seed 2.0 Mini (ByteDance)",
+    "reasoning": true,
+    "input": [
+      "text",
+      "image"
+    ],
+    "contextWindow": 262144,
+    "maxTokens": 32000
+  },
+  {
+    "id": "doubao-seed-2.1-turbo",
+    "name": "Doubao Seed 2.1 Turbo (ByteDance)",
+    "reasoning": true,
+    "input": [
+      "text",
+      "image"
+    ],
+    "contextWindow": 262144,
+    "maxTokens": 32000
+  },
+  {
     "id": "gemma-4",
     "name": "Gemma 4",
     "reasoning": false,
@@ -267,7 +351,7 @@ export const SNAPSHOT_MODELS: CatalogModel[] = [
       "image"
     ],
     "contextWindow": 262144,
-    "maxTokens": 16000,
+    "maxTokens": 32000,
     "maker": "Другие",
     "costRub": {
       "input": 12.75,
@@ -382,6 +466,17 @@ export const SNAPSHOT_MODELS: CatalogModel[] = [
       "cacheRead": 0.47,
       "cacheWrite": 5
     }
+  },
+  {
+    "id": "google/gemini-4-argon",
+    "name": "Gemini 4 Argon",
+    "reasoning": true,
+    "input": [
+      "text",
+      "image"
+    ],
+    "contextWindow": 1000000,
+    "maxTokens": 32000
   },
   {
     "id": "gpt-6-astra",
@@ -553,6 +648,17 @@ export const SNAPSHOT_MODELS: CatalogModel[] = [
     ]
   },
   {
+    "id": "kimi-k2.8",
+    "name": "Kimi K2.8",
+    "reasoning": true,
+    "input": [
+      "text",
+      "image"
+    ],
+    "contextWindow": 500000,
+    "maxTokens": 32000
+  },
+  {
     "id": "llama-4-maverick",
     "name": "Llama 4 Maverick",
     "reasoning": false,
@@ -659,6 +765,17 @@ export const SNAPSHOT_MODELS: CatalogModel[] = [
     }
   },
   {
+    "id": "minimax/minimax-m3.1-flash",
+    "name": "MiniMax M3.1 Flash",
+    "reasoning": true,
+    "input": [
+      "text",
+      "image"
+    ],
+    "contextWindow": 1000000,
+    "maxTokens": 32000
+  },
+  {
     "id": "moonshotai/kimi-k2.6",
     "name": "Kimi K2.6",
     "reasoning": false,
@@ -711,6 +828,16 @@ export const SNAPSHOT_MODELS: CatalogModel[] = [
       "cacheRead": 3,
       "cacheWrite": 26
     }
+  },
+  {
+    "id": "muse-spark-1.3",
+    "name": "Muse Spark 1.3",
+    "reasoning": true,
+    "input": [
+      "text"
+    ],
+    "contextWindow": 1048576,
+    "maxTokens": 32000
   },
   {
     "id": "nemotron-3-super-120b-a12b",
@@ -903,7 +1030,7 @@ export const SNAPSHOT_MODELS: CatalogModel[] = [
       "text",
       "image"
     ],
-    "contextWindow": 256000,
+    "contextWindow": 1000000,
     "maxTokens": 32000,
     "maker": "Alibaba (Qwen)",
     "costRub": {
@@ -948,6 +1075,16 @@ export const SNAPSHOT_MODELS: CatalogModel[] = [
       "cacheRead": 0.92,
       "cacheWrite": 9
     }
+  },
+  {
+    "id": "qwen3.8-2.4t-a95b",
+    "name": "Qwen3.8-2.4T-A95B",
+    "reasoning": true,
+    "input": [
+      "text"
+    ],
+    "contextWindow": 1000000,
+    "maxTokens": 32000
   },
   {
     "id": "qwen3.8-27b",
@@ -1002,6 +1139,16 @@ export const SNAPSHOT_MODELS: CatalogModel[] = [
       "cacheRead": 0.08,
       "cacheWrite": 0.76
     }
+  },
+  {
+    "id": "tencent/hy3",
+    "name": "Tencent Hy3",
+    "reasoning": true,
+    "input": [
+      "text"
+    ],
+    "contextWindow": 192000,
+    "maxTokens": 32000
   },
   {
     "id": "x-ai/grok-4.6",
@@ -1105,7 +1252,7 @@ export const SNAPSHOT_MODELS: CatalogModel[] = [
       "text",
       "image"
     ],
-    "contextWindow": 1048000,
+    "contextWindow": 1000000,
     "maxTokens": 32000,
     "maker": "Zhipu AI",
     "costRub": {
