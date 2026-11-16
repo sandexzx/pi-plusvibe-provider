@@ -5,32 +5,14 @@
  *   https://plusvibeapi.ru/api/integrations/pi.models.json
  *   https://plusvibeapi.ru/api/catalog
  *
- * Generated: 2026-10-27T16:58:56.483Z
+ * Generated: 2026-11-16T11:40:47.448Z
  */
 
 import type { CatalogModel } from "./catalog.ts"
 
-export const SNAPSHOT_GENERATED_AT = "2026-10-27T16:58:56.483Z"
+export const SNAPSHOT_GENERATED_AT = "2026-11-16T11:40:47.448Z"
 
 export const SNAPSHOT_MODELS: CatalogModel[] = [
-  {
-    "id": "anthropic/claude-haiku-4.5",
-    "name": "Claude Haiku 4.5",
-    "reasoning": false,
-    "input": [
-      "text",
-      "image"
-    ],
-    "contextWindow": 200000,
-    "maxTokens": 16000,
-    "maker": "Anthropic",
-    "costRub": {
-      "input": 25.15,
-      "output": 125.72,
-      "cacheRead": 3,
-      "cacheWrite": 25
-    }
-  },
   {
     "id": "anthropic/claude-opus-4.8",
     "name": "Claude Opus 4.8",
@@ -97,10 +79,10 @@ export const SNAPSHOT_MODELS: CatalogModel[] = [
     "maxTokens": 32000,
     "maker": "Anthropic",
     "costRub": {
-      "input": 49,
-      "output": 245,
-      "cacheRead": 5,
-      "cacheWrite": 61
+      "input": 87,
+      "output": 432,
+      "cacheRead": 9,
+      "cacheWrite": 109
     }
   },
   {
@@ -115,10 +97,10 @@ export const SNAPSHOT_MODELS: CatalogModel[] = [
     "maxTokens": 32000,
     "maker": "Anthropic",
     "costRub": {
-      "input": 163.43,
-      "output": 817.15,
-      "cacheRead": 4,
-      "cacheWrite": 204
+      "input": 417,
+      "output": 2081,
+      "cacheRead": 10,
+      "cacheWrite": 521
     }
   },
   {
@@ -133,10 +115,28 @@ export const SNAPSHOT_MODELS: CatalogModel[] = [
     "maxTokens": 32000,
     "maker": "Anthropic",
     "costRub": {
-      "input": 251.43,
-      "output": 1257.15,
-      "cacheRead": 6,
-      "cacheWrite": 314
+      "input": 535,
+      "output": 2671,
+      "cacheRead": 13,
+      "cacheWrite": 669
+    }
+  },
+  {
+    "id": "claude-fable-5-2",
+    "name": "Claude Fable 5.2",
+    "reasoning": true,
+    "input": [
+      "text",
+      "image"
+    ],
+    "contextWindow": 900000,
+    "maxTokens": 32000,
+    "maker": "Anthropic",
+    "costRub": {
+      "input": 117.92,
+      "output": 589.6,
+      "cacheRead": 3,
+      "cacheWrite": 147
     }
   },
   {
@@ -151,10 +151,10 @@ export const SNAPSHOT_MODELS: CatalogModel[] = [
     "maxTokens": 32000,
     "maker": "Anthropic",
     "costRub": {
-      "input": 3,
-      "output": 13,
-      "cacheRead": 0.3,
-      "cacheWrite": 4
+      "input": 2.79,
+      "output": 13.94,
+      "cacheRead": 0.28,
+      "cacheWrite": 3
     }
   },
   {
@@ -205,10 +205,10 @@ export const SNAPSHOT_MODELS: CatalogModel[] = [
     "maxTokens": 32000,
     "maker": "Anthropic",
     "costRub": {
-      "input": 114,
-      "output": 570,
-      "cacheRead": 6,
-      "cacheWrite": 143
+      "input": 38.72,
+      "output": 193.6,
+      "cacheRead": 3,
+      "cacheWrite": 39
     }
   },
   {
@@ -239,6 +239,23 @@ export const SNAPSHOT_MODELS: CatalogModel[] = [
     ],
     "contextWindow": 1000000,
     "maxTokens": 32000
+  },
+  {
+    "id": "deepseek-v4-pro-uncensored",
+    "name": "DeepSeek V4 Pro Uncensored",
+    "reasoning": true,
+    "input": [
+      "text"
+    ],
+    "contextWindow": 163840,
+    "maxTokens": 32000,
+    "maker": "DeepSeek",
+    "costRub": {
+      "input": 146.67,
+      "output": 293.34,
+      "cacheRead": 147,
+      "cacheWrite": 147
+    }
   },
   {
     "id": "deepseek-v4.1-flash",
@@ -277,6 +294,28 @@ export const SNAPSHOT_MODELS: CatalogModel[] = [
     }
   },
   {
+    "id": "deepseek-v4.1-flash-1017-uncensored",
+    "name": "DeepSeek V4.1 Flash 1017 Uncensored",
+    "reasoning": true,
+    "input": [
+      "text"
+    ],
+    "contextWindow": 1000000,
+    "maxTokens": 32000,
+    "maker": "DeepSeek",
+    "costRub": {
+      "input": 17.6,
+      "output": 66,
+      "cacheRead": 4,
+      "cacheWrite": 18
+    },
+    "thinkingLevels": [
+      "low",
+      "high",
+      "max"
+    ]
+  },
+  {
     "id": "deepseek/deepseek-v4-flash-0731",
     "name": "DeepSeek V4 Flash",
     "reasoning": true,
@@ -310,24 +349,6 @@ export const SNAPSHOT_MODELS: CatalogModel[] = [
       "output": 57.6,
       "cacheRead": 2,
       "cacheWrite": 20
-    }
-  },
-  {
-    "id": "doubao-seed-2.0-code",
-    "name": "Doubao Seed 2.0 Code (ByteDance)",
-    "reasoning": true,
-    "input": [
-      "text",
-      "image"
-    ],
-    "contextWindow": 262144,
-    "maxTokens": 32000,
-    "maker": "ByteDance",
-    "costRub": {
-      "input": 125.66,
-      "output": 753.93,
-      "cacheRead": 126,
-      "cacheWrite": 126
     }
   },
   {
@@ -393,13 +414,30 @@ export const SNAPSHOT_MODELS: CatalogModel[] = [
       "image"
     ],
     "contextWindow": 262144,
-    "maxTokens": 16000,
+    "maxTokens": 32000,
     "maker": "Google",
     "costRub": {
-      "input": 12.83,
-      "output": 38.47,
-      "cacheRead": 1,
+      "input": 12.75,
+      "output": 48.16,
+      "cacheRead": 7,
       "cacheWrite": 13
+    }
+  },
+  {
+    "id": "gemma-4-uncensored",
+    "name": "Gemma 4 Uncensored",
+    "reasoning": false,
+    "input": [
+      "text"
+    ],
+    "contextWindow": 65536,
+    "maxTokens": 32000,
+    "maker": "Google",
+    "costRub": {
+      "input": 22,
+      "output": 102.67,
+      "cacheRead": 22,
+      "cacheWrite": 22
     }
   },
   {
@@ -421,21 +459,47 @@ export const SNAPSHOT_MODELS: CatalogModel[] = [
     }
   },
   {
-    "id": "glm-5.3-flashx",
-    "name": "GLM-5.3 FlashX",
+    "id": "glm-5.3-flash-uncensored",
+    "name": "GLM-5.3 Flash Uncensored",
     "reasoning": true,
     "input": [
       "text"
     ],
-    "contextWindow": 1048000,
+    "contextWindow": 1048576,
     "maxTokens": 32000,
     "maker": "Zhipu AI",
     "costRub": {
-      "input": 4.56,
-      "output": 15.4,
-      "cacheRead": 0.96,
-      "cacheWrite": 5
-    }
+      "input": 29.34,
+      "output": 117.34,
+      "cacheRead": 15,
+      "cacheWrite": 29
+    },
+    "thinkingLevels": [
+      "low",
+      "high"
+    ]
+  },
+  {
+    "id": "glm-5.3-uncensored",
+    "name": "GLM-5.3 Uncensored",
+    "reasoning": true,
+    "input": [
+      "text"
+    ],
+    "contextWindow": 1048576,
+    "maxTokens": 32000,
+    "maker": "Zhipu AI",
+    "costRub": {
+      "input": 146.67,
+      "output": 293.34,
+      "cacheRead": 22,
+      "cacheWrite": 147
+    },
+    "thinkingLevels": [
+      "low",
+      "high",
+      "max"
+    ]
   },
   {
     "id": "google/gemini-3.1-flash-lite",
@@ -449,9 +513,9 @@ export const SNAPSHOT_MODELS: CatalogModel[] = [
     "maxTokens": 32000,
     "maker": "Google",
     "costRub": {
-      "input": 19.64,
-      "output": 117.83,
-      "cacheRead": 2,
+      "input": 6.08,
+      "output": 36.45,
+      "cacheRead": 0.61,
       "cacheWrite": 0
     }
   },
@@ -467,9 +531,9 @@ export const SNAPSHOT_MODELS: CatalogModel[] = [
     "maxTokens": 32000,
     "maker": "Google",
     "costRub": {
-      "input": 8.12,
-      "output": 48.71,
-      "cacheRead": 0.81,
+      "input": 22.78,
+      "output": 136.67,
+      "cacheRead": 2,
       "cacheWrite": 0
     }
   },
@@ -485,8 +549,8 @@ export const SNAPSHOT_MODELS: CatalogModel[] = [
     "maxTokens": 32000,
     "maker": "Google",
     "costRub": {
-      "input": 11.18,
-      "output": 67.06,
+      "input": 12.49,
+      "output": 74.92,
       "cacheRead": 1,
       "cacheWrite": 0
     }
@@ -533,6 +597,24 @@ export const SNAPSHOT_MODELS: CatalogModel[] = [
     ]
   },
   {
+    "id": "google/gemini-4-hydrogen",
+    "name": "Gemini 4 Hydrogen",
+    "reasoning": true,
+    "input": [
+      "text",
+      "image"
+    ],
+    "contextWindow": 1000000,
+    "maxTokens": 32000,
+    "maker": "Google",
+    "costRub": {
+      "input": 6.6,
+      "output": 33,
+      "cacheRead": 0.33,
+      "cacheWrite": 0
+    }
+  },
+  {
     "id": "gpt-6-astra",
     "name": "GPT-6 Astra",
     "reasoning": true,
@@ -544,10 +626,10 @@ export const SNAPSHOT_MODELS: CatalogModel[] = [
     "maxTokens": 32000,
     "maker": "OpenAI",
     "costRub": {
-      "input": 71.2,
-      "output": 356,
-      "cacheRead": 7,
-      "cacheWrite": 89
+      "input": 139.34,
+      "output": 696.63,
+      "cacheRead": 14,
+      "cacheWrite": 139
     },
     "thinkingLevels": [
       "minimal",
@@ -594,10 +676,10 @@ export const SNAPSHOT_MODELS: CatalogModel[] = [
     "maxTokens": 32000,
     "maker": "OpenAI",
     "costRub": {
-      "input": 14.24,
-      "output": 71.2,
-      "cacheRead": 1,
-      "cacheWrite": 18
+      "input": 26.4,
+      "output": 99.74,
+      "cacheRead": 3,
+      "cacheWrite": 26
     },
     "thinkingLevels": [
       "minimal",
@@ -620,10 +702,35 @@ export const SNAPSHOT_MODELS: CatalogModel[] = [
     "maxTokens": 32000,
     "maker": "OpenAI",
     "costRub": {
-      "input": 11,
-      "output": 55,
-      "cacheRead": 0.55,
-      "cacheWrite": 14
+      "input": 15.98,
+      "output": 79.89,
+      "cacheRead": 2,
+      "cacheWrite": 16
+    },
+    "thinkingLevels": [
+      "low",
+      "medium",
+      "high",
+      "xhigh",
+      "max"
+    ]
+  },
+  {
+    "id": "gpt-6.1-terra",
+    "name": "GPT-6.1 Terra",
+    "reasoning": true,
+    "input": [
+      "text",
+      "image"
+    ],
+    "contextWindow": 1050000,
+    "maxTokens": 32000,
+    "maker": "OpenAI",
+    "costRub": {
+      "input": 7.12,
+      "output": 35.6,
+      "cacheRead": 0.36,
+      "cacheWrite": 9
     },
     "thinkingLevels": [
       "low",
@@ -702,21 +809,20 @@ export const SNAPSHOT_MODELS: CatalogModel[] = [
     ]
   },
   {
-    "id": "kimi-k2.8",
-    "name": "Kimi K2.8",
+    "id": "kimi-k2.6-uncensored",
+    "name": "Kimi K2.6 Uncensored",
     "reasoning": true,
     "input": [
-      "text",
-      "image"
+      "text"
     ],
-    "contextWindow": 500000,
+    "contextWindow": 262144,
     "maxTokens": 32000,
     "maker": "Moonshot",
     "costRub": {
-      "input": 12.03,
-      "output": 50.62,
-      "cacheRead": 1,
-      "cacheWrite": 12
+      "input": 171.6,
+      "output": 1076.54,
+      "cacheRead": 172,
+      "cacheWrite": 172
     }
   },
   {
@@ -730,10 +836,10 @@ export const SNAPSHOT_MODELS: CatalogModel[] = [
     "maxTokens": 32000,
     "maker": "Moonshot",
     "costRub": {
-      "input": 9.09,
-      "output": 45.47,
-      "cacheRead": 0.91,
-      "cacheWrite": 9
+      "input": 20.46,
+      "output": 102.28,
+      "cacheRead": 2,
+      "cacheWrite": 20
     },
     "thinkingLevels": [
       "low",
@@ -751,7 +857,7 @@ export const SNAPSHOT_MODELS: CatalogModel[] = [
     ],
     "contextWindow": 1048576,
     "maxTokens": 32000,
-    "maker": "Meta",
+    "maker": "Llama",
     "costRub": {
       "input": 28.33,
       "output": 113.32,
@@ -771,10 +877,27 @@ export const SNAPSHOT_MODELS: CatalogModel[] = [
     "maxTokens": 32000,
     "maker": "Xiaomi",
     "costRub": {
-      "input": 16.9,
-      "output": 33.8,
+      "input": 20.03,
+      "output": 40.06,
       "cacheRead": 2,
-      "cacheWrite": 17
+      "cacheWrite": 20
+    }
+  },
+  {
+    "id": "mimo-v2.6-flash-uncensored",
+    "name": "Mimo V2.6 Flash Uncensored",
+    "reasoning": true,
+    "input": [
+      "text"
+    ],
+    "contextWindow": 520000,
+    "maxTokens": 32000,
+    "maker": "Xiaomi",
+    "costRub": {
+      "input": 293.34,
+      "output": 880,
+      "cacheRead": 293,
+      "cacheWrite": 293
     }
   },
   {
@@ -789,10 +912,10 @@ export const SNAPSHOT_MODELS: CatalogModel[] = [
     "maxTokens": 32000,
     "maker": "Xiaomi",
     "costRub": {
-      "input": 24.44,
-      "output": 48.88,
-      "cacheRead": 2,
-      "cacheWrite": 24
+      "input": 28.72,
+      "output": 57.44,
+      "cacheRead": 3,
+      "cacheWrite": 29
     }
   },
   {
@@ -802,7 +925,7 @@ export const SNAPSHOT_MODELS: CatalogModel[] = [
     "input": [
       "text"
     ],
-    "contextWindow": 196000,
+    "contextWindow": 1000000,
     "maxTokens": 32000,
     "maker": "MiniMax",
     "costRub": {
@@ -866,42 +989,6 @@ export const SNAPSHOT_MODELS: CatalogModel[] = [
     }
   },
   {
-    "id": "moonshotai/kimi-k2.6",
-    "name": "Kimi K2.6",
-    "reasoning": false,
-    "input": [
-      "text",
-      "image"
-    ],
-    "contextWindow": 262144,
-    "maxTokens": 32000,
-    "maker": "Moonshot",
-    "costRub": {
-      "input": 152.25,
-      "output": 641.03,
-      "cacheRead": 25,
-      "cacheWrite": 152
-    }
-  },
-  {
-    "id": "moonshotai/kimi-k2.7-code",
-    "name": "Kimi K2.7 Code",
-    "reasoning": true,
-    "input": [
-      "text",
-      "image"
-    ],
-    "contextWindow": 262144,
-    "maxTokens": 32000,
-    "maker": "Moonshot",
-    "costRub": {
-      "input": 34,
-      "output": 163,
-      "cacheRead": 3,
-      "cacheWrite": 34
-    }
-  },
-  {
     "id": "moonshotai/kimi-k3",
     "name": "Kimi K3",
     "reasoning": true,
@@ -920,19 +1007,20 @@ export const SNAPSHOT_MODELS: CatalogModel[] = [
     }
   },
   {
-    "id": "muse-spark-1.3",
-    "name": "Muse Spark 1.3",
+    "id": "muse-ember-1.0",
+    "name": "Muse Ember 1.0",
     "reasoning": true,
     "input": [
-      "text"
+      "text",
+      "image"
     ],
     "contextWindow": 1048576,
     "maxTokens": 32000,
     "costRub": {
-      "input": 3.17,
-      "output": 10.76,
-      "cacheRead": 0.32,
-      "cacheWrite": 3
+      "input": 12.66,
+      "output": 63.27,
+      "cacheRead": 1,
+      "cacheWrite": 13
     },
     "thinkingLevels": [
       "minimal",
@@ -958,6 +1046,23 @@ export const SNAPSHOT_MODELS: CatalogModel[] = [
       "output": 56.66,
       "cacheRead": 0,
       "cacheWrite": 0
+    }
+  },
+  {
+    "id": "nemotron-3-ultra-550b-a55b-uncensored",
+    "name": "Nemotron 3 Ultra 550B A55B Uncensored",
+    "reasoning": true,
+    "input": [
+      "text"
+    ],
+    "contextWindow": 131000,
+    "maxTokens": 32000,
+    "maker": "NVIDIA",
+    "costRub": {
+      "input": 165,
+      "output": 968,
+      "cacheRead": 165,
+      "cacheWrite": 165
     }
   },
   {
@@ -989,10 +1094,10 @@ export const SNAPSHOT_MODELS: CatalogModel[] = [
     "maxTokens": 32000,
     "maker": "OpenAI",
     "costRub": {
-      "input": 3.4,
-      "output": 20.37,
-      "cacheRead": 0.34,
-      "cacheWrite": 3
+      "input": 0.76,
+      "output": 4.53,
+      "cacheRead": 0.08,
+      "cacheWrite": 0.76
     },
     "thinkingLevels": [
       "minimal",
@@ -1011,14 +1116,14 @@ export const SNAPSHOT_MODELS: CatalogModel[] = [
       "text",
       "image"
     ],
-    "contextWindow": 786432,
+    "contextWindow": 1050000,
     "maxTokens": 32000,
     "maker": "OpenAI",
     "costRub": {
-      "input": 11,
-      "output": 69,
-      "cacheRead": 1,
-      "cacheWrite": 11
+      "input": 35.82,
+      "output": 143.34,
+      "cacheRead": 4,
+      "cacheWrite": 36
     },
     "thinkingLevels": [
       "minimal",
@@ -1041,10 +1146,10 @@ export const SNAPSHOT_MODELS: CatalogModel[] = [
     "maxTokens": 32000,
     "maker": "OpenAI",
     "costRub": {
-      "input": 6.13,
-      "output": 36.77,
-      "cacheRead": 0.61,
-      "cacheWrite": 6
+      "input": 6.81,
+      "output": 40.85,
+      "cacheRead": 0.68,
+      "cacheWrite": 7
     },
     "thinkingLevels": [
       "minimal",
@@ -1102,8 +1207,8 @@ export const SNAPSHOT_MODELS: CatalogModel[] = [
     "maxTokens": 8000,
     "maker": "Perplexity",
     "costRub": {
-      "input": 313.6,
-      "output": 1568,
+      "input": 440.01,
+      "output": 2200.04,
       "cacheRead": 0,
       "cacheWrite": 0
     }
@@ -1134,7 +1239,7 @@ export const SNAPSHOT_MODELS: CatalogModel[] = [
       "text",
       "image"
     ],
-    "contextWindow": 256000,
+    "contextWindow": 1000000,
     "maxTokens": 32000,
     "maker": "Alibaba (Qwen)",
     "costRub": {
@@ -1142,6 +1247,24 @@ export const SNAPSHOT_MODELS: CatalogModel[] = [
       "output": 96.7,
       "cacheRead": 24,
       "cacheWrite": 24
+    }
+  },
+  {
+    "id": "qwen/qwen3.8-max",
+    "name": "Qwen3.8 Max",
+    "reasoning": true,
+    "input": [
+      "text",
+      "image"
+    ],
+    "contextWindow": 1000000,
+    "maxTokens": 32000,
+    "maker": "Alibaba (Qwen)",
+    "costRub": {
+      "input": 3.63,
+      "output": 11.61,
+      "cacheRead": 0.97,
+      "cacheWrite": 4
     }
   },
   {
@@ -1158,25 +1281,8 @@ export const SNAPSHOT_MODELS: CatalogModel[] = [
     "costRub": {
       "input": 11.45,
       "output": 65.39,
-      "cacheRead": 1,
+      "cacheRead": 3,
       "cacheWrite": 11
-    }
-  },
-  {
-    "id": "qwen3.8-2.4t-a95b",
-    "name": "Qwen3.8-2.4T-A95B",
-    "reasoning": true,
-    "input": [
-      "text"
-    ],
-    "contextWindow": 1000000,
-    "maxTokens": 32000,
-    "maker": "Alibaba (Qwen)",
-    "costRub": {
-      "input": 2.52,
-      "output": 7.55,
-      "cacheRead": 0.25,
-      "cacheWrite": 3
     }
   },
   {
@@ -1191,10 +1297,27 @@ export const SNAPSHOT_MODELS: CatalogModel[] = [
     "maxTokens": 32000,
     "maker": "Alibaba (Qwen)",
     "costRub": {
-      "input": 39.24,
-      "output": 196.16,
-      "cacheRead": 4,
-      "cacheWrite": 39
+      "input": 0.63,
+      "output": 3.78,
+      "cacheRead": 0.06,
+      "cacheWrite": 0.63
+    }
+  },
+  {
+    "id": "qwen3.8-27b-uncensored",
+    "name": "Qwen3.8-27B Uncensored",
+    "reasoning": false,
+    "input": [
+      "text"
+    ],
+    "contextWindow": 262144,
+    "maxTokens": 32000,
+    "maker": "Alibaba (Qwen)",
+    "costRub": {
+      "input": 183.34,
+      "output": 550,
+      "cacheRead": 183,
+      "cacheWrite": 183
     }
   },
   {
@@ -1208,10 +1331,28 @@ export const SNAPSHOT_MODELS: CatalogModel[] = [
     "maxTokens": 32000,
     "maker": "Alibaba (Qwen)",
     "costRub": {
-      "input": 2.11,
-      "output": 6.2,
-      "cacheRead": 0.21,
+      "input": 2.89,
+      "output": 8.49,
+      "cacheRead": 0.29,
       "cacheWrite": 0
+    }
+  },
+  {
+    "id": "qwen3.8-flash-next",
+    "name": "Qwen3.8 Flash-Next",
+    "reasoning": true,
+    "input": [
+      "text",
+      "image"
+    ],
+    "contextWindow": 262144,
+    "maxTokens": 32000,
+    "maker": "Alibaba (Qwen)",
+    "costRub": {
+      "input": 25.84,
+      "output": 81.6,
+      "cacheRead": 3,
+      "cacheWrite": 26
     }
   },
   {
@@ -1226,10 +1367,10 @@ export const SNAPSHOT_MODELS: CatalogModel[] = [
     "maxTokens": 32000,
     "maker": "Alibaba (Qwen)",
     "costRub": {
-      "input": 0.76,
-      "output": 2.37,
-      "cacheRead": 0.08,
-      "cacheWrite": 0.76
+      "input": 10.27,
+      "output": 32.27,
+      "cacheRead": 1,
+      "cacheWrite": 10
     }
   },
   {
@@ -1341,10 +1482,10 @@ export const SNAPSHOT_MODELS: CatalogModel[] = [
     "maxTokens": 32000,
     "maker": "Zhipu AI",
     "costRub": {
-      "input": 2.96,
-      "output": 9.3,
-      "cacheRead": 0.3,
-      "cacheWrite": 3
+      "input": 2.42,
+      "output": 8.5,
+      "cacheRead": 0.62,
+      "cacheWrite": 0.62
     }
   },
   {
@@ -1352,17 +1493,16 @@ export const SNAPSHOT_MODELS: CatalogModel[] = [
     "name": "GLM-5.3",
     "reasoning": true,
     "input": [
-      "text",
-      "image"
+      "text"
     ],
     "contextWindow": 1000000,
     "maxTokens": 32000,
     "maker": "Zhipu AI",
     "costRub": {
-      "input": 16.56,
-      "output": 52.05,
-      "cacheRead": 3,
-      "cacheWrite": 3
+      "input": 15.49,
+      "output": 48.68,
+      "cacheRead": 2,
+      "cacheWrite": 15
     }
   },
   {
@@ -1373,7 +1513,7 @@ export const SNAPSHOT_MODELS: CatalogModel[] = [
       "text",
       "image"
     ],
-    "contextWindow": 262144,
+    "contextWindow": 262000,
     "maxTokens": 32000,
     "maker": "Zhipu AI",
     "costRub": {
